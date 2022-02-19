@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @namespace   https://greasyfork.org/zh-CN/users/306433-baster
-// @version     0.63.0
+// @version     0.63.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去广告，去掉需要打开app的提示
 // @description 增加网友需求-环球网移动端
@@ -9,10 +8,6 @@
 // @description 增加太平洋电脑网
 // @description 增加IT1352 IT屋，解决需要扫码关注15天内才能阅读全文
 // @description 原作者: 稻米鼠 【https://greasyfork.org/zh-CN/scripts/397476 已停更，此为fork版，自用维护】
-// @supportURL  https://greasyfork.org/zh-CN/users/306433-baster
-// @homepageURL https://greasyfork.org/zh-CN/users/306433-baster
-// @license     GNU
-// @resource
 // @match       *://m.huanqiu.com/*
 // @match       *://iknow.lenovo.com.cn/*
 // @match       *://g.pconline.com.cn/*
@@ -79,6 +74,11 @@
 // @match       *://ddrv.cn/a/*
 // @match       *://www.reddit.com/*
 // @match       *://www.meipian.cn/*
+// @resource
+// @license     GNU
+// @supportURL  https://greasyfork.org/zh-CN/users/306433-baster
+// @homepageURL https://greasyfork.org/zh-CN/users/306433
+// @namespace   https://greasyfork.org/zh-CN/users/306433
 // @icon        https://i.v2ex.co/81ToM02ss.png
 // @grant       GM_addStyle
 // @grant       GM_info
