@@ -1,6 +1,6 @@
 # tempermonkey-script
 
-用于一些网站优化的 tempermonkey 脚本
+自己使用的一些用于网站优化的 tempermonkey 脚本
 
 [https://greasyfork.org/zh-CN/users/306433](https://greasyfork.org/zh-CN/users/306433)
 
