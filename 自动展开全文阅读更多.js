@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     0.64.0
+// @version     0.64.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去广告，去掉需要打开app的提示
 // @description 增加码农之家
@@ -455,10 +455,19 @@
     {
       // 简书移动版
       regex: /^http(s)?:\/\/(w+\.)?jianshu\.com\/p\/\w+/i,
-      remove: ['#note-show .content .show-content-free .collapse-tips'],
+      remove: [
+        '.note-graceful-button p',
+        '.download-app-guidance,.call-app-btn,#jianshu-header',
+        '#note-show .content .show-content-free .collapse-tips'
+      ],
       content: [
         '#note-show .content .show-content-free .collapse-free-content'
       ],
+      style: `
+        #note-show .content .show-content-free .collapse-free-content {
+            position: unset !important
+        }
+        `,
       script: () => {
         let nodes = document.querySelectorAll(
           "a[href^='https://link.jianshu.com?t=']"
