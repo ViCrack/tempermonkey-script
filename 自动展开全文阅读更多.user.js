@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.19.0
+// @version     1.19.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化
 // @description 增加百度百科
@@ -44,14 +44,15 @@
 // @match       *://bbs.elecfans.com/m/*
 // @match       *://www.yiidian.com/*
 // @match       *://m.jb51.cc/*
+// @match       *://www.jb51.cc/*
 // @match       *://baike.baidu.com/item/*
 // @grant       GM_addStyle
 // @run-at      document-start
 // ==/UserScript==
 
-;(function () {
-  var websites = [
-    {
+;
+(function () {
+  var websites = [{
       wildcard: '*://baike.baidu.com/item/*',
       wait: [
         [
@@ -62,7 +63,7 @@
       ]
     },
     {
-      wildcard: '*://m.jb51.cc/*',
+      wildcard: ['*://m.jb51.cc/*', '*://www.jb51.cc/*'],
       hide: ['#read-more-wrap'],
       expand: ['#container']
     },
@@ -223,19 +224,19 @@
     }
   ]
 
-  function matchRule (str, rule) {
+  function matchRule(str, rule) {
     var escapeRegex = str => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
     return new RegExp(
       '^' +
-        rule
-          .split('*')
-          .map(escapeRegex)
-          .join('.*') +
-        '$'
+      rule
+      .split('*')
+      .map(escapeRegex)
+      .join('.*') +
+      '$'
     ).test(str)
   }
 
-  function getUrlQuery (url, urldecode = true) {
+  function getUrlQuery(url, urldecode = true) {
     let obj = {}
     let keyvalue = []
     let key = '',
@@ -250,14 +251,14 @@
     return obj
   }
 
-  function randomString (length, chars) {
+  function randomString(length, chars) {
     let result = ''
     for (let i = length; i > 0; --i)
       result += chars[Math.floor(Math.random() * chars.length)]
     return result
   }
 
-  function setCookie (name, value, days) {
+  function setCookie(name, value, days) {
     let expires = ''
     if (days) {
       let date = new Date()
@@ -267,7 +268,7 @@
     document.cookie = name + '=' + (value || '') + expires + '; path=/'
   }
 
-  function getCookie (name) {
+  function getCookie(name) {
     let nameEQ = name + '='
     let ca = document.cookie.split(';')
     for (let i = 0; i < ca.length; i++) {
@@ -278,11 +279,11 @@
     return null
   }
 
-  function eraseCookie (name) {
+  function eraseCookie(name) {
     document.cookie = name + '=; Max-Age=-99999999;'
   }
 
-  function clearAdLoop () {
+  function clearAdLoop() {
     let id = setTimeout(';')
     for (let i = 0; i < id; i++) {
       clearTimeout(i)
@@ -293,7 +294,7 @@
     }
   }
 
-  function safeWaitJQuery (callbackFunc) {
+  function safeWaitJQuery(callbackFunc) {
     let jQueryTimer = setInterval(function () {
       if (typeof jQuery !== 'undefined') {
         clearInterval(jQueryTimer)
@@ -323,8 +324,7 @@
 
   for (var website of websites) {
     if (
-      'wildcard' in website &&
-      matchRule(window.location.href, website.wildcard)
+      (Array.isArray(website.wildcard) && website.wildcard.some(s => matchRule(window.location.href, s))) || matchRule(window.location.href, website.wildcard)
     ) {
       let style = ''
       if ('hide' in website && website.hide.length > 0) {
