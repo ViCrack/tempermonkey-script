@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.20.0
+// @version     1.20.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化
 // @description 增加人民日报
@@ -53,8 +53,7 @@
 // @run-at      document-start
 // ==/UserScript==
 
-;
-(function () {
+;(function () {
   var websites = [
     {
       wildcard: '*://wap.peopleapp.com/article/*',
@@ -116,8 +115,8 @@
     },
     {
       wildcard: '*://zhidao.baidu.com/question/*',
-      hide: ['.w-detail-display-btn-text'],
-      expand: ['.w-detail-container.w-detail-index']
+      hide: ['.w-detail-display-btn-text', '.wgt-best-mask'],
+      expand: ['.w-detail-container.w-detail-index', 'div[id^=best-content-]']
     },
     {
       wildcard: '*://baijiahao.baidu.com/s*',
@@ -222,18 +221,17 @@
               // $(document).off('click', '.container-blog a')
               // $(document).off('click', '[data-report-click]')
 
-              if (typeof (csdn) != "undefined") {
+              if (typeof csdn != 'undefined') {
                 // https://github.com/adlered/CSDNGreener
-                $("code").attr("onclick", "mdcp.copyCode(event)");
+                $('code').attr('onclick', 'mdcp.copyCode(event)')
                 try {
-                  csdn.copyright.init("", "", "");
-                  Object.defineProperty(window, "articleType", {
+                  csdn.copyright.init('', '', '')
+                  Object.defineProperty(window, 'articleType', {
                     value: 0,
                     writable: false,
                     configurable: false
-                  });
+                  })
                 } catch (err) {}
-
               }
             })
           })
@@ -247,19 +245,20 @@
     }
   ]
 
-  function matchRule(str, rule) {
+  function matchRule (str, rule) {
+    console.log(rule)
     var escapeRegex = str => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
     return new RegExp(
       '^' +
-      rule
-      .split('*')
-      .map(escapeRegex)
-      .join('.*') +
-      '$'
+        rule
+          .split('*')
+          .map(escapeRegex)
+          .join('.*') +
+        '$'
     ).test(str)
   }
 
-  function getUrlQuery(url, urldecode = true) {
+  function getUrlQuery (url, urldecode = true) {
     let obj = {}
     let keyvalue = []
     let key = '',
@@ -274,14 +273,14 @@
     return obj
   }
 
-  function randomString(length, chars) {
+  function randomString (length, chars) {
     let result = ''
     for (let i = length; i > 0; --i)
       result += chars[Math.floor(Math.random() * chars.length)]
     return result
   }
 
-  function setCookie(name, value, days) {
+  function setCookie (name, value, days) {
     let expires = ''
     if (days) {
       let date = new Date()
@@ -291,7 +290,7 @@
     document.cookie = name + '=' + (value || '') + expires + '; path=/'
   }
 
-  function getCookie(name) {
+  function getCookie (name) {
     let nameEQ = name + '='
     let ca = document.cookie.split(';')
     for (let i = 0; i < ca.length; i++) {
@@ -302,11 +301,11 @@
     return null
   }
 
-  function eraseCookie(name) {
+  function eraseCookie (name) {
     document.cookie = name + '=; Max-Age=-99999999;'
   }
 
-  function clearAdLoop() {
+  function clearAdLoop () {
     let id = setTimeout(';')
     for (let i = 0; i < id; i++) {
       clearTimeout(i)
@@ -317,7 +316,7 @@
     }
   }
 
-  function safeWaitJQuery(callbackFunc) {
+  function safeWaitJQuery (callbackFunc) {
     let jQueryTimer = setInterval(function () {
       if (typeof jQuery !== 'undefined') {
         clearInterval(jQueryTimer)
@@ -346,9 +345,14 @@
   const readyName = randomString(8, 'abcdefghijklmnopqrstuvwxyz')
 
   for (var website of websites) {
-    if (
-      (Array.isArray(website.wildcard) && website.wildcard.some(s => matchRule(window.location.href, s))) || matchRule(window.location.href, website.wildcard)
-    ) {
+    let hit = false
+    if (Array.isArray(website.wildcard)) {
+      hit = website.wildcard.some(s => matchRule(window.location.href, s))
+    } else {
+      hit = matchRule(window.location.href, website.wildcard)
+    }
+
+    if (hit) {
       let style = ''
       if ('hide' in website && website.hide.length > 0) {
         style +=
