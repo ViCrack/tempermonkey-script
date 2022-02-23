@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.19.2
+// @version     1.20.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化
+// @description 增加人民日报
 // @description CSDN剪贴板复制拦截小尾巴
 // @description 增加百度百科
 // @description 增加一点教程
@@ -47,13 +48,20 @@
 // @match       *://m.jb51.cc/*
 // @match       *://www.jb51.cc/*
 // @match       *://baike.baidu.com/item/*
+// @match       *://wap.peopleapp.com/article/*
 // @grant       GM_addStyle
 // @run-at      document-start
 // ==/UserScript==
 
 ;
 (function () {
-  var websites = [{
+  var websites = [
+    {
+      wildcard: '*://wap.peopleapp.com/article/*',
+      hide: ['.read-more'],
+      expand: ['.article-wrapper.has-more-high']
+    },
+    {
       wildcard: '*://baike.baidu.com/item/*',
       wait: [
         [
@@ -348,6 +356,11 @@
           `
                 {
                     display: none !important;
+                    visibility:hidden !important;
+                    max-height: 0 !important;
+                    max-width: 0 !important;
+                    height: 0 !important;
+                    width: 0 !important;
                 }
 
                 `
@@ -359,6 +372,7 @@
                 {
                     height: auto !important;
                     max-height: unset !important;
+                    overflow: unset !important;
                 }
 
                 `
