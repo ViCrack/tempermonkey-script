@@ -60,30 +60,32 @@
         {
             wildcard: "*://blog.51cto.com/*",
             js: () => {
-                $(".copy_btn").removeClass("disable");
-                $(".copy_btn").text("免登录复制");
-                $("body")
-                    .off("click.copy_btn")
-                    .on("click", ".copy_btn", function (e) {
-                        e.stopPropagation();
-                        let $this = $(this);
-                        console.log($this);
-                        let text = $(this).parent(".hljs-cto").find("pre").find(".language-")[0].textContent;
-                        copy(text).then(
-                            () => {
-                                $this.text("已复制");
-                                setTimeout(function () {
-                                    $this.text("免登录复制");
-                                }, 2000);
-                            },
-                            (e) => {
-                                $this.text("复制失败:" + e);
-                                setTimeout(function () {
-                                    $this.text("免登录复制");
-                                }, 2000);
-                            }
-                        );
-                    });
+                jQuery(function () {
+                    $(".copy_btn").removeClass("disable");
+                    $(".copy_btn").text("免登录复制");
+                    $("body")
+                        .off("click.copy_btn")
+                        .on("click", ".copy_btn", function (e) {
+                            e.stopPropagation();
+                            let $this = $(this);
+                            console.log($this);
+                            let text = $(this).parent(".hljs-cto").find("pre").find(".language-")[0].textContent;
+                            copy(text).then(
+                                () => {
+                                    $this.text("已复制");
+                                    setTimeout(function () {
+                                        $this.text("免登录复制");
+                                    }, 2000);
+                                },
+                                (e) => {
+                                    $this.text("复制失败:" + e);
+                                    setTimeout(function () {
+                                        $this.text("免登录复制");
+                                    }, 2000);
+                                }
+                            );
+                        });
+                });
             },
         },
         {
