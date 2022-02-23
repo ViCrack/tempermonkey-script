@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.22.0
+// @version     1.22.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，免登陆复制
-// @description 增加51cto免登陆复制
+// @description 增加51cto，实现免登陆复制
 // @description 增加人民日报
 // @description CSDN剪贴板复制拦截小尾巴
 // @description 增加百度百科
