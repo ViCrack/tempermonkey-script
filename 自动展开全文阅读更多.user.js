@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.19.1
+// @version     1.19.2
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化
+// @description CSDN剪贴板复制拦截小尾巴
 // @description 增加百度百科
 // @description 增加一点教程
 // @description 增加编程之家
@@ -212,6 +213,20 @@
               jQuery('[data-report-click]').removeAttr('data-report-click')
               // $(document).off('click', '.container-blog a')
               // $(document).off('click', '[data-report-click]')
+
+              if (typeof (csdn) != "undefined") {
+                // https://github.com/adlered/CSDNGreener
+                $("code").attr("onclick", "mdcp.copyCode(event)");
+                try {
+                  csdn.copyright.init("", "", "");
+                  Object.defineProperty(window, "articleType", {
+                    value: 0,
+                    writable: false,
+                    configurable: false
+                  });
+                } catch (err) {}
+
+              }
             })
           })
         })
