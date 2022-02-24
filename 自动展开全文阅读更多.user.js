@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.23.1
+// @version     1.23.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，免登陆复制
 // @description xuedingmiao 博客
