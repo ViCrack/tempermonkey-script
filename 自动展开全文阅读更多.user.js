@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.22.1
+// @version     1.23.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，免登陆复制
+// @description xuedingmiao 博客
 // @description 增加51cto，实现免登陆复制
 // @description 增加人民日报
 // @description CSDN剪贴板复制拦截小尾巴
@@ -51,12 +52,18 @@
 // @match       *://baike.baidu.com/item/*
 // @match       *://wap.peopleapp.com/article/*
 // @match       *://blog.51cto.com/*
+// @match       *://xuedingmiao.com/*
 // @grant       GM_addStyle
 // @run-at      document-start
 // ==/UserScript==
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://xuedingmiao.com/*",
+            hide: ["#read-more-wrap"],
+            expand: ["#main-content"],
+        },
         {
             wildcard: "*://blog.51cto.com/*",
             js: () => {
