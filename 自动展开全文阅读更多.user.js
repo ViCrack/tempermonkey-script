@@ -1,8 +1,11 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.23.0
+// @version     1.26.0
 // @author      baster
-// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，免登陆复制
+// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description cnbeta
+// @description 增加百度新闻，并且去掉悬浮的'百度APP内阅读'的按钮
+// @description 腾讯新闻
 // @description xuedingmiao 博客
 // @description 增加51cto，实现免登陆复制
 // @description 增加人民日报
@@ -30,6 +33,7 @@
 // @homepageURL https://greasyfork.org/zh-CN/users/306433
 // @namespace   https://greasyfork.org/zh-CN/users/306433
 // @icon        https://img.icons8.com/stickers/100/000000/double-down.png
+// @match       *://ext.baidu.com/api/comment/*
 // @match       *://www.xz577.com/*
 // @match       *://m.huanqiu.com/*
 // @match       *://iknow.lenovo.com.cn/*
@@ -53,12 +57,25 @@
 // @match       *://wap.peopleapp.com/article/*
 // @match       *://blog.51cto.com/*
 // @match       *://xuedingmiao.com/*
+// @match       *://xw.qq.com/cmsid/*
+// @match       *://mbd.baidu.com/newspage/*
+// @match       *://www.cnbeta.com/articles/*
 // @grant       GM_addStyle
+// @grant       GM_openInTab
 // @run-at      document-start
 // ==/UserScript==
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.cnbeta.com/articles/*",
+            hide: ["div[style='display:block !important;position:fixed;bottom:0;margin-top:10px;width:100%;background:#c44;color:#fff;font-size:15px;z-index:99999']"],
+        },
+        {
+            wildcard: "*://xw.qq.com/cmsid/*",
+            hide: [".collapseWrapper", ".redbag.item"],
+            expand: ["#article_body"],
+        },
         {
             wildcard: "*://xuedingmiao.com/*",
             hide: ["#read-more-wrap"],
@@ -75,7 +92,6 @@
                         .on("click", ".copy_btn", function (e) {
                             e.stopPropagation();
                             let $this = $(this);
-                            console.log($this);
                             let text = $(this).parent(".hljs-cto").find("pre").find(".language-")[0].textContent;
                             copy(text).then(
                                 () => {
@@ -152,11 +168,6 @@
             expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]"],
         },
         {
-            wildcard: "*://baijiahao.baidu.com/s*",
-            hide: [".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined"],
-            expand: [".mainContent"],
-        },
-        {
             wildcard: "*://haokan.baidu.com/v*",
             hide: [".share-origin.wx-share-launch"],
         },
@@ -224,6 +235,21 @@
             },
         },
         {
+            // 百度新闻, 百家号
+            wildcard: [
+                "*://baijiahao.baidu.com/s*",
+                "*://ext.baidu.com/api/comment/v1/page/list*",
+                "*://mbd.baidu.com/newspage/*",
+                "*://www.baidu.com/#iact=wiseindex/tabs/news/activity/newsdetail=*",
+            ],
+            hide: [".packupButton", ".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined"],
+            expand: [".mainContent"],
+            wait: [
+                ["p:contains('百度APP内阅读')", (node) => node.parentNode.parentNode.removeChild(node.parentNode)],
+                // [".layer-content.layer-content-shown", (node) => node.querySelector(".layer-itemBtn.normal").dispatchEvent(new Event("click"))],
+            ],
+        },
+        {
             wildcard: "*://blog.csdn.net/*",
             hide: [".weixin-shadowbox.wap-shadowbox", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
             expand: [".article_content", "#article_content", "#comment"],
@@ -263,7 +289,6 @@
     ];
 
     function matchRule(str, rule) {
-        console.log(rule);
         var escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
         return new RegExp("^" + rule.split("*").map(escapeRegex).join(".*") + "$").test(str);
     }
@@ -369,6 +394,10 @@
         });
     }
 
+    function querySelectorIncludesText(selector, text) {
+        return Array.from(document.querySelectorAll(selector)).filter((el) => el.textContent.includes(text));
+    }
+
     // https://github.com/Shawak/TwitchSquad/blob/main/twitchsquad.user.js
     if (typeof GM_addStyle === "undefined") {
         GM_addStyle = function (css) {
@@ -398,6 +427,7 @@
         }
 
         if (hit) {
+            console.log(website);
             let style = "";
             if ("hide" in website && website.hide.length > 0) {
                 style +=
@@ -429,23 +459,39 @@
             if ("css" in website && website.css.length > 0) {
                 style += website.css;
             }
-            // console.log(style)
+            // console.log(style);
             GM_addStyle(style);
 
             if ("wait" in website) {
+                // TODO 需要换种方式优化
+                let ready = {};
                 let id = setInterval(() => {
                     try {
                         for (let w of website.wait) {
-                            document.querySelectorAll(w[0]).forEach((node) => {
-                                if (!node.dataset[readyName]) {
-                                    if (w[1] === "click") {
-                                        node.click();
-                                    } else {
-                                        w[1].call(node, node); // 返回值
-                                    }
-                                    node.dataset[readyName] = true;
+                            if (!(w[0] in ready)) {
+                                let nodeList;
+                                let m = w[0].match(/(.+?):contains\(\s*['"](.+?)['"]\s*\)/);
+                                if (m) {
+                                    nodeList = querySelectorIncludesText(m[1], m[2]);
+                                } else {
+                                    nodeList = document.querySelectorAll(w[0]);
                                 }
-                            });
+                                nodeList.forEach((node) => {
+                                    if (!node.dataset[readyName]) {
+                                        if (w[1] === "click") {
+                                            node.dispatchEvent(new Event("click"));
+                                            node.dispatchEvent(new Event("tap"));
+                                        } else {
+                                            w[1].call(node, node); // 返回值
+                                        }
+                                        node.dataset[readyName] = true;
+                                    }
+                                    ready[w[0]] = true;
+                                });
+                            }
+                        }
+                        if (Object.keys(ready).length == website.wait.length) {
+                            clearInterval(id);
                         }
                     } catch (x) {
                         clearInterval(id);
@@ -456,6 +502,8 @@
             if ("js" in website) {
                 if (document.readyState == "complete") {
                     website.js();
+                    // alert("程序出现异常");
+                    // GM_openInTab("https://greasyfork.org/zh-CN/scripts/440400/feedback");
                 } else {
                     document.addEventListener("DOMContentLoaded", website.js);
                 }
