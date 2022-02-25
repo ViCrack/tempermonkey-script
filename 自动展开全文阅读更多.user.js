@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.26.0
+// @version     1.27.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 知乎，去广告，下载app的悬浮按钮，就不使用app查看
 // @description cnbeta
 // @description 增加百度新闻，并且去掉悬浮的'百度APP内阅读'的按钮
 // @description 腾讯新闻
@@ -60,6 +61,7 @@
 // @match       *://xw.qq.com/cmsid/*
 // @match       *://mbd.baidu.com/newspage/*
 // @match       *://www.cnbeta.com/articles/*
+// @match       *://www.zhihu.com/question/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @run-at      document-start
@@ -67,6 +69,23 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.zhihu.com/question/*",
+            hide: [".OpenInAppButton", ".openInApp", ".MobileAppHeader-downloadLink", ".ContentItem-expandButton", ".AdBelowMoreAnswers", ".MBannerAd"],
+            expand: [".RichContent-inner--collapsed", ".RichContent-inner"],
+            wait: [
+                [".ModalExp-modalShow", (node) => ((node.parentNode.style.display = "none"), document.body.classList.remove("ModalWrap-body"))],
+                [
+                    ".is-collapsed",
+                    (node) => {
+                        node.classList.remove("is-collapsed");
+                        node.onclick = (e) => e.stopPropagation();
+                    },
+                ],
+            ],
+            css: `
+            `,
+        },
         {
             wildcard: "*://www.cnbeta.com/articles/*",
             hide: ["div[style='display:block !important;position:fixed;bottom:0;margin-top:10px;width:100%;background:#c44;color:#fff;font-size:15px;z-index:99999']"],
@@ -246,7 +265,7 @@
             expand: [".mainContent"],
             wait: [
                 ["p:contains('百度APP内阅读')", (node) => node.parentNode.parentNode.removeChild(node.parentNode)],
-                // [".layer-content.layer-content-shown", (node) => node.querySelector(".layer-itemBtn.normal").dispatchEvent(new Event("click"))],
+                [".layer-content.layer-content-shown", (node) => node.querySelector(".layer-itemBtn.normal").dispatchEvent(new Event("click"))],
             ],
         },
         {
@@ -486,6 +505,7 @@
                                         }
                                         node.dataset[readyName] = true;
                                     }
+                                    console.log(w[0]);
                                     ready[w[0]] = true;
                                 });
                             }
