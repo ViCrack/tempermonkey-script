@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.27.0
+// @version     1.28.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
-// @description 知乎，去广告，下载app的悬浮按钮，就不使用app查看
-// @description cnbeta
+// @description 增加慕课网
+// @description 增加知乎，去广告，下载app的悬浮按钮，就不使用app查看
+// @description 增加cnbeta
 // @description 增加百度新闻，并且去掉悬浮的'百度APP内阅读'的按钮
 // @description 腾讯新闻
-// @description xuedingmiao 博客
+// @description 增加增加xuedingmiao 博客
 // @description 增加51cto，实现免登陆复制
 // @description 增加人民日报
 // @description CSDN剪贴板复制拦截小尾巴
@@ -62,6 +63,7 @@
 // @match       *://mbd.baidu.com/newspage/*
 // @match       *://www.cnbeta.com/articles/*
 // @match       *://www.zhihu.com/question/*
+// @match       *://m.imooc.com/wenda/detail/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @run-at      document-start
@@ -69,6 +71,11 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://m.imooc.com/wenda/detail/*",
+            hide: [".wenda-more-wrap.js-wenda-more"],
+            expand: ["#wap_wenda_detail", "#wenda_content"],
+        },
         {
             wildcard: "*://www.zhihu.com/question/*",
             hide: [".OpenInAppButton", ".openInApp", ".MobileAppHeader-downloadLink", ".ContentItem-expandButton", ".AdBelowMoreAnswers", ".MBannerAd"],
@@ -83,8 +90,6 @@
                     },
                 ],
             ],
-            css: `
-            `,
         },
         {
             wildcard: "*://www.cnbeta.com/articles/*",
@@ -226,21 +231,7 @@
         },
         {
             wildcard: "*://www.jianshu.com/p/*",
-            hide: [
-                ".note-graceful-button p",
-                ".download-app-guidance",
-                ".call-app-btn",
-                "#jianshu-header",
-                "#note-show .content .show-content-free .collapse-tips",
-                ".download",
-                ".note-comment-above-ad-wrap",
-                ".close-collapse-btn",
-                ".open-app-btn",
-                ".app-open",
-                "#guangtui",
-                "#fixed-ad-container",
-                ".fubiao-dialog",
-            ],
+            hide: [".note-graceful-button p", ".download-app-guidance", ".call-app-btn", "#jianshu-header", "#note-show .content .show-content-free .collapse-tips", ".download", ".note-comment-above-ad-wrap", ".close-collapse-btn", ".open-app-btn", ".app-open", "#guangtui", "#fixed-ad-container", ".fubiao-dialog"],
             expand: ["#note-show .content .show-content-free .collapse-free-content"],
             js: () => {
                 document.querySelector(".collapse-free-content").removeAttribute("class");
@@ -255,12 +246,7 @@
         },
         {
             // 百度新闻, 百家号
-            wildcard: [
-                "*://baijiahao.baidu.com/s*",
-                "*://ext.baidu.com/api/comment/v1/page/list*",
-                "*://mbd.baidu.com/newspage/*",
-                "*://www.baidu.com/#iact=wiseindex/tabs/news/activity/newsdetail=*",
-            ],
+            wildcard: ["*://baijiahao.baidu.com/s*", "*://ext.baidu.com/api/comment/v1/page/list*", "*://mbd.baidu.com/newspage/*", "*://www.baidu.com/#iact=wiseindex/tabs/news/activity/newsdetail=*"],
             hide: [".packupButton", ".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined"],
             expand: [".mainContent"],
             wait: [
