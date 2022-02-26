@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.28.0
+// @version     1.28.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
 // @description 增加慕课网
@@ -63,7 +63,7 @@
 // @match       *://mbd.baidu.com/newspage/*
 // @match       *://www.cnbeta.com/articles/*
 // @match       *://www.zhihu.com/question/*
-// @match       *://m.imooc.com/wenda/detail/*
+// @match       *://m.imooc.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @run-at      document-start
@@ -72,8 +72,8 @@
 (function () {
     var websites = [
         {
-            wildcard: "*://m.imooc.com/wenda/detail/*",
-            hide: [".wenda-more-wrap.js-wenda-more"],
+            wildcard: "*://m.imooc.com/*",
+            hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload"],
             expand: ["#wap_wenda_detail", "#wenda_content"],
         },
         {
