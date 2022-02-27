@@ -1,8 +1,10 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.29.0
+// @version     1.31.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 增加Python学习网 - 免登陆观看视频, 没有30秒的限制
+// @description 增加36氪
 // @description 增加慕课网
 // @description 增加知乎，去广告，下载app的悬浮按钮，就不使用app查看
 // @description 增加cnbeta
@@ -35,6 +37,7 @@
 // @homepageURL https://greasyfork.org/zh-CN/users/306433
 // @namespace   https://greasyfork.org/zh-CN/users/306433
 // @icon        https://img.icons8.com/stickers/100/000000/double-down.png
+// @match       *://m.36kr.com/*
 // @match       *://ext.baidu.com/api/comment/*
 // @match       *://www.xz577.com/*
 // @match       *://m.huanqiu.com/*
@@ -65,13 +68,34 @@
 // @match       *://www.zhihu.com/*
 // @match       *://zhuanlan.zhihu.com/p/*
 // @match       *://m.imooc.com/*
+// @match       *://*.py.cn/code/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
+// @grant       unsafeWindow
 // @run-at      document-start
 // ==/UserScript==
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://*.py.cn/code/*",
+            start: () => {
+                unsafeWindow.IsLevelDate = 1;
+                Object.defineProperty(unsafeWindow, "IsLevelDate", {
+                    get: function () {
+                        return 1;
+                    },
+                    enumerable: true,
+                    configurable: true,
+                });
+                console.log(unsafeWindow.IsLevelDate);
+            },
+        },
+        {
+            wildcard: "*://m.36kr.com/*",
+            hide: [".kr-mobile-goapp", ".article-goapp", ".float-app-button-wrp", ".article-top-swiper-goapp"],
+            expand: ["#body-content"],
+        },
         {
             wildcard: "*://m.imooc.com/*",
             hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload"],
@@ -431,6 +455,7 @@
             head.appendChild(style);
         };
     }
+    if (typeof unsafeWindow == "undefined") unsafeWindow = window;
 
     const readyName = randomString(8, "abcdefghijklmnopqrstuvwxyz");
 
@@ -524,6 +549,10 @@
                         clearInterval(id);
                     }
                 }, 1000);
+            }
+
+            if ("start" in website) {
+                website.start();
             }
 
             if ("js" in website) {
