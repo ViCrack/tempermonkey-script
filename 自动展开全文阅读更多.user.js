@@ -88,7 +88,13 @@
                     enumerable: true,
                     configurable: true,
                 });
-                console.log(unsafeWindow.IsLevelDate);
+                Object.defineProperty(unsafeWindow, "is_login", {
+                    get: function () {
+                        return 1;
+                    },
+                    enumerable: true,
+                    configurable: true,
+                });
             },
         },
         {
