@@ -8,7 +8,6 @@
 // @homepageURL  https://greasyfork.org/zh-CN/users/306433
 // @match        https://www.tapd.cn/*
 // @icon         https://www.tapd.cn/favicon.ico
-// @license      GNU
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==

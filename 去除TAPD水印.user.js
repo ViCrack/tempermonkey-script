@@ -12,15 +12,15 @@
 // @grant        none
 // ==/UserScript==
 
-;(function () {
-  'use strict'
+(function () {
+    "use strict";
 
-  var element = document.createElement('style')
-  element.setAttribute('type', 'text/css')
-  document.head.appendChild(element)
-  element.textContent = '.dontdeleteme-div {background-size: 0px !important;} '
+    var element = document.createElement("style");
+    element.setAttribute("type", "text/css");
+    document.head.appendChild(element);
+    element.textContent = ".dontdeleteme-div {background-size: 0px !important;} ";
 
-  /* MutationObserver delete+change_style
+    /* MutationObserver delete+change_style
         .dontdeleteme-div {
     		width: 100% !important;
     		height: 100% !important;
@@ -43,4 +43,4 @@
     		transform: initial !important;
     	}
     	*/
-})()
+})();
