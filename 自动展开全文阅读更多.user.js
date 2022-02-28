@@ -1,9 +1,17 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.23.1
+// @version     1.32.0
 // @author      baster
-// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，免登陆复制
-// @description xuedingmiao 博客
+// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 增加新浪财经
+// @description 增加Python学习网 - 免登陆观看视频, 没有30秒的限制
+// @description 增加36氪
+// @description 增加慕课网
+// @description 增加知乎，去广告，下载app的悬浮按钮，就不使用app查看
+// @description 增加cnbeta
+// @description 增加百度新闻，并且去掉悬浮的'百度APP内阅读'的按钮
+// @description 腾讯新闻
+// @description 增加增加xuedingmiao 博客
 // @description 增加51cto，实现免登陆复制
 // @description 增加人民日报
 // @description CSDN剪贴板复制拦截小尾巴
@@ -30,6 +38,8 @@
 // @homepageURL https://greasyfork.org/zh-CN/users/306433
 // @namespace   https://greasyfork.org/zh-CN/users/306433
 // @icon        https://img.icons8.com/stickers/100/000000/double-down.png
+// @match       *://m.36kr.com/*
+// @match       *://ext.baidu.com/api/comment/*
 // @match       *://www.xz577.com/*
 // @match       *://m.huanqiu.com/*
 // @match       *://iknow.lenovo.com.cn/*
@@ -53,12 +63,90 @@
 // @match       *://wap.peopleapp.com/article/*
 // @match       *://blog.51cto.com/*
 // @match       *://xuedingmiao.com/*
+// @match       *://xw.qq.com/cmsid/*
+// @match       *://mbd.baidu.com/newspage/*
+// @match       *://www.cnbeta.com/articles/*
+// @match       *://www.zhihu.com/*
+// @match       *://zhuanlan.zhihu.com/p/*
+// @match       *://m.imooc.com/*
+// @match       *://*.py.cn/code/*
+// @match       *://finance.sina.com.cn/*
 // @grant       GM_addStyle
+// @grant       GM_openInTab
+// @grant       unsafeWindow
 // @run-at      document-start
 // ==/UserScript==
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://finance.sina.com.cn/*",
+            hide: ["#sina-cont000", "#sina-pages-u"]
+        },
+        {
+            wildcard: "*://*.py.cn/code/*",
+            start: () => {
+                unsafeWindow.IsLevelDate = 1;
+                Object.defineProperty(unsafeWindow, "IsLevelDate", {
+                    get: function () {
+                        return 1;
+                    },
+                    enumerable: true,
+                    configurable: true,
+                });
+                Object.defineProperty(unsafeWindow, "is_login", {
+                    get: function () {
+                        return 1;
+                    },
+                    enumerable: true,
+                    configurable: true,
+                });
+            },
+        },
+        {
+            wildcard: "*://m.36kr.com/*",
+            hide: [".kr-mobile-goapp", ".article-goapp", ".float-app-button-wrp", ".article-top-swiper-goapp"],
+            expand: ["#body-content"],
+        },
+        {
+            wildcard: "*://m.imooc.com/*",
+            hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload"],
+            expand: ["#wap_wenda_detail", "#wenda_content"],
+        },
+        {
+            wildcard: "*://zhuanlan.zhihu.com/p/*",
+            hide: [".OpenInAppButton"],
+            disable: ["[data-za-detail-view-path-module]"],
+            css: `
+                [class^="css-"][href]{
+                    display: block !important;
+             }
+            `,
+        },
+        {
+            wildcard: "*://www.zhihu.com/*",
+            hide: [".OpenInAppButton", ".openInApp", ".DownloadGuide", ".Pc-feedAd-container", ".MobileAppHeader-downloadLink", ".ContentItem-expandButton", ".AdBelowMoreAnswers", ".MBannerAd"],
+            expand: [".RichContent-inner--collapsed", ".RichContent-inner"],
+            wait: [
+                [".ModalExp-modalShow", (node) => ((node.parentNode.style.display = "none"), document.body.classList.remove("ModalWrap-body"))],
+                [
+                    ".is-collapsed",
+                    (node) => {
+                        node.classList.remove("is-collapsed");
+                        node.onclick = (e) => e.stopPropagation();
+                    },
+                ],
+            ],
+        },
+        {
+            wildcard: "*://www.cnbeta.com/articles/*",
+            hide: ["div[style='display:block !important;position:fixed;bottom:0;margin-top:10px;width:100%;background:#c44;color:#fff;font-size:15px;z-index:99999']"],
+        },
+        {
+            wildcard: "*://xw.qq.com/cmsid/*",
+            hide: [".collapseWrapper", ".redbag.item"],
+            expand: ["#article_body"],
+        },
         {
             wildcard: "*://xuedingmiao.com/*",
             hide: ["#read-more-wrap"],
@@ -75,7 +163,6 @@
                         .on("click", ".copy_btn", function (e) {
                             e.stopPropagation();
                             let $this = $(this);
-                            console.log($this);
                             let text = $(this).parent(".hljs-cto").find("pre").find(".language-")[0].textContent;
                             copy(text).then(
                                 () => {
@@ -152,11 +239,6 @@
             expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]"],
         },
         {
-            wildcard: "*://baijiahao.baidu.com/s*",
-            hide: [".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined"],
-            expand: [".mainContent"],
-        },
-        {
             wildcard: "*://haokan.baidu.com/v*",
             hide: [".share-origin.wx-share-launch"],
         },
@@ -196,21 +278,7 @@
         },
         {
             wildcard: "*://www.jianshu.com/p/*",
-            hide: [
-                ".note-graceful-button p",
-                ".download-app-guidance",
-                ".call-app-btn",
-                "#jianshu-header",
-                "#note-show .content .show-content-free .collapse-tips",
-                ".download",
-                ".note-comment-above-ad-wrap",
-                ".close-collapse-btn",
-                ".open-app-btn",
-                ".app-open",
-                "#guangtui",
-                "#fixed-ad-container",
-                ".fubiao-dialog",
-            ],
+            hide: [".note-graceful-button p", ".download-app-guidance", ".call-app-btn", "#jianshu-header", "#note-show .content .show-content-free .collapse-tips", ".download", ".note-comment-above-ad-wrap", ".close-collapse-btn", ".open-app-btn", ".app-open", "#guangtui", "#fixed-ad-container", ".fubiao-dialog"],
             expand: ["#note-show .content .show-content-free .collapse-free-content"],
             js: () => {
                 let node = document.querySelector(".collapse-free-content");
@@ -226,6 +294,16 @@
                     }
                 });
             },
+        },
+        {
+            // 百度新闻, 百家号
+            wildcard: ["*://baijiahao.baidu.com/s*", "*://ext.baidu.com/api/comment/v1/page/list*", "*://mbd.baidu.com/newspage/*", "*://www.baidu.com/#iact=wiseindex/tabs/news/activity/newsdetail=*"],
+            hide: [".packupButton", ".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined"],
+            expand: [".mainContent"],
+            wait: [
+                ["p:contains('百度APP内阅读')", (node) => node.parentNode.parentNode.removeChild(node.parentNode)],
+                [".layer-content.layer-content-shown", (node) => node.querySelector(".layer-itemBtn.normal").dispatchEvent(new Event("click"))],
+            ],
         },
         {
             wildcard: "*://blog.csdn.net/*",
@@ -267,7 +345,6 @@
     ];
 
     function matchRule(str, rule) {
-        console.log(rule);
         var escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
         return new RegExp("^" + rule.split("*").map(escapeRegex).join(".*") + "$").test(str);
     }
@@ -373,6 +450,10 @@
         });
     }
 
+    function querySelectorIncludesText(selector, text) {
+        return Array.from(document.querySelectorAll(selector)).filter((el) => el.textContent.includes(text));
+    }
+
     // https://github.com/Shawak/TwitchSquad/blob/main/twitchsquad.user.js
     if (typeof GM_addStyle === "undefined") {
         GM_addStyle = function (css) {
@@ -390,6 +471,7 @@
             head.appendChild(style);
         };
     }
+    if (typeof unsafeWindow == "undefined") unsafeWindow = window;
 
     const readyName = randomString(8, "abcdefghijklmnopqrstuvwxyz");
 
@@ -402,6 +484,7 @@
         }
 
         if (hit) {
+            console.log(website);
             let style = "";
             if ("hide" in website && website.hide.length > 0) {
                 style +=
@@ -430,26 +513,53 @@
 
                 `;
             }
+            if ("disable" in website && website.disable.length > 0) {
+                style +=
+                    website.disable.join(",\n") +
+                    `
+                {
+                    pointer-events: none !important;
+                }
+
+                `;
+            }
             if ("css" in website && website.css.length > 0) {
                 style += website.css;
             }
-            // console.log(style)
+            console.log(style);
             GM_addStyle(style);
 
             if ("wait" in website) {
+                // TODO 需要换种方式优化
+                let ready = {};
                 let id = setInterval(() => {
                     try {
                         for (let w of website.wait) {
-                            document.querySelectorAll(w[0]).forEach((node) => {
-                                if (!node.dataset[readyName]) {
-                                    if (w[1] === "click") {
-                                        node.click();
-                                    } else {
-                                        w[1].call(node, node); // 返回值
-                                    }
-                                    node.dataset[readyName] = true;
+                            if (!(w[0] in ready)) {
+                                let nodeList;
+                                let m = w[0].match(/(.+?):contains\(\s*['"](.+?)['"]\s*\)/);
+                                if (m) {
+                                    nodeList = querySelectorIncludesText(m[1], m[2]);
+                                } else {
+                                    nodeList = document.querySelectorAll(w[0]);
                                 }
-                            });
+                                nodeList.forEach((node) => {
+                                    if (!node.dataset[readyName]) {
+                                        if (w[1] === "click") {
+                                            node.dispatchEvent(new Event("click"));
+                                            node.dispatchEvent(new Event("tap"));
+                                        } else {
+                                            w[1].call(node, node); // 返回值
+                                        }
+                                        node.dataset[readyName] = true;
+                                    }
+                                    console.log(w[0]);
+                                    ready[w[0]] = true;
+                                });
+                            }
+                        }
+                        if (Object.keys(ready).length == website.wait.length) {
+                            clearInterval(id);
                         }
                     } catch (x) {
                         clearInterval(id);
@@ -457,9 +567,15 @@
                 }, 1000);
             }
 
+            if ("start" in website) {
+                website.start();
+            }
+
             if ("js" in website) {
                 if (document.readyState == "complete") {
                     website.js();
+                    // alert("程序出现异常");
+                    // GM_openInTab("https://greasyfork.org/zh-CN/scripts/440400/feedback");
                 } else {
                     document.addEventListener("DOMContentLoaded", website.js);
                 }
