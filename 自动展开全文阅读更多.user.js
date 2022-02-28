@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.23.0
+// @version     1.23.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，免登陆复制
 // @description xuedingmiao 博客
@@ -213,10 +213,14 @@
             ],
             expand: ["#note-show .content .show-content-free .collapse-free-content"],
             js: () => {
-                document.querySelector(".collapse-free-content").removeAttribute("class");
-                let nodes = document.querySelectorAll("a[href^='https://link.jianshu.com?t=']");
+                let node = document.querySelector(".collapse-free-content");
+                if (node) {
+                    node.removeAttribute("class");
+                }
+                    
+                let nodes = document.querySelectorAll("a[href^='https://links.jianshu.com/go?to=']");
                 nodes.forEach((node) => {
-                    let link = getUrlQuery(node.href).t;
+                    let link = getUrlQuery(node.href).to;
                     if (link) {
                         node.setAttribute("href", link);
                     }
