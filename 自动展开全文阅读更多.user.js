@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.33.0
+// @version     1.33.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
 // @description 增加当游
@@ -67,7 +67,7 @@
 // @match       *://xw.qq.com/cmsid/*
 // @match       *://mbd.baidu.com/newspage/*
 // @match       *://www.cnbeta.com/articles/*
-// @match       *://www.zhihu.com/*
+// @match       *://www.zhihu.com/question/*
 // @match       *://zhuanlan.zhihu.com/p/*
 // @match       *://m.imooc.com/*
 // @match       *://*.py.cn/code/*
@@ -130,7 +130,7 @@
             `,
         },
         {
-            wildcard: "*://www.zhihu.com/*",
+            wildcard: "*://www.zhihu.com/question/*",
             hide: [".OpenInAppButton", ".openInApp", ".DownloadGuide", ".Pc-feedAd-container", ".MobileAppHeader-downloadLink", ".ContentItem-expandButton", ".AdBelowMoreAnswers", ".MBannerAd"],
             expand: [".RichContent-inner--collapsed", ".RichContent-inner"],
             wait: [
