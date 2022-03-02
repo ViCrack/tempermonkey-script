@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.33.0
+// @version     1.34.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 增加掘金 - PC端去除网址重定向
 // @description 增加当游
 // @description 增加新浪财经
 // @description 增加Python学习网 - 免登陆观看视频, 没有30秒的限制
@@ -72,6 +73,7 @@
 // @match       *://m.imooc.com/*
 // @match       *://*.py.cn/code/*
 // @match       *://finance.sina.com.cn/*
+// @match       *://juejin.cn/post/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -80,6 +82,17 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://juejin.cn/post/*",
+            js: () => {
+                document.querySelectorAll("a[href^='https://link.juejin.cn?target=']").forEach((node) => {
+                    let link = getUrlQuery(node.href).target;
+                    if (link) {
+                        node.setAttribute("href", link);
+                    }
+                });
+            },
+        },
         {
             wildcard: "*://www.3h3.com/soft/*",
             hide: ["#showmore"],
