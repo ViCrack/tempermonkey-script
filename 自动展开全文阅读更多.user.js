@@ -68,7 +68,7 @@
 // @match       *://xw.qq.com/cmsid/*
 // @match       *://mbd.baidu.com/newspage/*
 // @match       *://www.cnbeta.com/articles/*
-// @match       *://www.zhihu.com/*
+// @match       *://www.zhihu.com/question/*
 // @match       *://zhuanlan.zhihu.com/p/*
 // @match       *://m.imooc.com/*
 // @match       *://*.py.cn/code/*
@@ -143,7 +143,7 @@
             `,
         },
         {
-            wildcard: "*://www.zhihu.com/*",
+            wildcard: "*://www.zhihu.com/question/*",
             hide: [".OpenInAppButton", ".openInApp", ".DownloadGuide", ".Pc-feedAd-container", ".MobileAppHeader-downloadLink", ".ContentItem-expandButton", ".AdBelowMoreAnswers", ".MBannerAd"],
             expand: [".RichContent-inner--collapsed", ".RichContent-inner"],
             wait: [
