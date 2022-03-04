@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.34.1
+// @version     1.35.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description OSCHINA
 // @description 增加掘金 - PC端去除网址重定向
 // @description 增加当游
 // @description 增加新浪财经
@@ -74,6 +75,7 @@
 // @match       *://*.py.cn/code/*
 // @match       *://finance.sina.com.cn/*
 // @match       *://juejin.cn/post/*
+// @match       *://www.oschina.net/p/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -82,6 +84,11 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.oschina.net/p/*",
+            hide: ["div.collapse-bar"],
+            expand: ["div.article-detail"]
+        },
         {
             wildcard: "*://juejin.cn/post/*",
             js: () => {
