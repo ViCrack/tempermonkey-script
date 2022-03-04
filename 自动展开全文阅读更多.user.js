@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.35.0
+// @version     1.35.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
 // @description OSCHINA
@@ -158,7 +158,6 @@
                     ".is-collapsed",
                     (node) => {
                         node.classList.remove("is-collapsed");
-                        node.onclick = (e) => e.stopPropagation();
                     },
                 ],
             ],
