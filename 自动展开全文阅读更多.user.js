@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.35.1
+// @version     1.36.2
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 改进去重网址重定向的代码
 // @description OSCHINA
 // @description 增加掘金 - PC端去除网址重定向
 // @description 增加当游
@@ -76,6 +77,7 @@
 // @match       *://finance.sina.com.cn/*
 // @match       *://juejin.cn/post/*
 // @match       *://www.oschina.net/p/*
+// @match       *://iswbm.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -85,20 +87,18 @@
 (function () {
     var websites = [
         {
+            wildcard: "*://iswbm.com/*",
+            hide: ["#read-more-wrap"],
+            expand: ["#container"],
+        },
+        {
             wildcard: "*://www.oschina.net/p/*",
             hide: ["div.collapse-bar"],
-            expand: ["div.article-detail"]
+            expand: ["div.article-detail"],
         },
         {
             wildcard: "*://juejin.cn/post/*",
-            js: () => {
-                document.querySelectorAll("a[href^='https://link.juejin.cn?target=']").forEach((node) => {
-                    let link = getUrlQuery(node.href).target;
-                    if (link) {
-                        node.setAttribute("href", link);
-                    }
-                });
-            },
+            directLink: "target=(.+?)(&|$)",
         },
         {
             wildcard: "*://www.3h3.com/soft/*",
@@ -591,6 +591,23 @@
                 }, 1000);
             }
 
+            if ("directLink" in website) {
+                // 去除链接重定向
+                document.addEventListener("click", (e) => {
+                    // https://greasyfork.org/zh-CN/scripts/20431-zhihu-link-redirect-fix
+                    let dom = e.target;
+                    console.log(dom);
+                    console.log(e.currentTarget);
+                    console.log(dom.nodeName);
+                    if (dom.nodeName.toUpperCase() === "A") {
+                        let regRet = dom.search.match(new RegExp(website.directLink));
+                        if (regRet && regRet.length == 3) {
+                            dom.href = decodeURIComponent(regRet[1]);
+                        }
+                    }
+                });
+            }
+
             if ("start" in website) {
                 website.start();
             }
@@ -604,6 +621,7 @@
                     document.addEventListener("DOMContentLoaded", website.js);
                 }
             }
+
             break;
         }
     }
