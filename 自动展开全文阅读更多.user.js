@@ -1,8 +1,10 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.36.2
+// @version     1.38.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 增加豆瓣
+// @description 增加搜狗搜索，360搜索去除网址重定向，加快打开速度
 // @description 改进去重网址重定向的代码
 // @description OSCHINA
 // @description 增加掘金 - PC端去除网址重定向
@@ -78,6 +80,9 @@
 // @match       *://juejin.cn/post/*
 // @match       *://www.oschina.net/p/*
 // @match       *://iswbm.com/*
+// @match       *://m.so.com/s?q=*
+// @match       *://wap.sogou.com/web/*
+// @match       *://www.douban.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -86,6 +91,18 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.douban.com/*",
+            directLink: ["*.douban.com/link2/?url=*", "url"],
+        },
+        {
+            wildcard: "*://wap.sogou.com/web/*",
+            directLink: ["*://wap.sogou.com/web/id=*&url=*", "url"],
+        },
+        {
+            wildcard: "*://m.so.com/s?q=*",
+            directLink: ["*.so.com/jump?u=*", "u"],
+        },
         {
             wildcard: "*://iswbm.com/*",
             hide: ["#read-more-wrap"],
@@ -98,7 +115,7 @@
         },
         {
             wildcard: "*://juejin.cn/post/*",
-            directLink: "target=(.+?)(&|$)",
+            directLink: ["*link.juejin.cn/?target=*", "target"],
         },
         {
             wildcard: "*://www.3h3.com/soft/*",
@@ -147,6 +164,7 @@
                     display: block !important;
              }
             `,
+            directLink: ["*link.zhihu.com/?target=*", "target"],
         },
         {
             wildcard: "*://www.zhihu.com/question/*",
@@ -161,6 +179,7 @@
                     },
                 ],
             ],
+            directLink: ["*link.zhihu.com/?target=*", "target"],
         },
         {
             wildcard: "*://www.cnbeta.com/articles/*",
@@ -600,9 +619,16 @@
                     console.log(e.currentTarget);
                     console.log(dom.nodeName);
                     if (dom.nodeName.toUpperCase() === "A") {
-                        let regRet = dom.search.match(new RegExp(website.directLink));
-                        if (regRet && regRet.length == 3) {
-                            dom.href = decodeURIComponent(regRet[1]);
+                        let d = website.directLink;
+                        if (matchRule(dom.href, d[0])) {
+                            if (typeof d[1] === "function") {
+                                d[1].call(dom, dom);
+                            } else {
+                                let param = getUrlQuery(dom.href);
+                                if (param[d[1]]) {
+                                    dom.href = param[d[1]];
+                                }
+                            }
                         }
                     }
                 });
