@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.39.0
+// @version     1.40.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 增加百度搜索移动端, 去除网址重定向
 // @description 增加豆瓣
 // @description 增加搜狗搜索，360搜索去除网址重定向，加快打开速度
 // @description 改进去重网址重定向的代码
@@ -84,6 +85,7 @@
 // @match       *://wap.sogou.com/web/*
 // @match       *://www.douban.com/*
 // @match       *://www.wxnmh.com/*
+// @match       *://m.baidu.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -92,6 +94,19 @@
 
 (function () {
     var websites = [
+        {
+            // 百度搜索移动端
+            wildcard: "*://m.baidu.com/*",
+            bindClick: [
+                "div.result",
+                (node) => {
+                    if (node.dataset.log) {
+                        let link = JSON.parse(node.dataset.log).mu;
+                        node.querySelector("article").setAttribute("rl-link-href", link);
+                    }
+                },
+            ],
+        },
         {
             wildcard: "*://www.wxnmh.com/*",
             hide: [".hide-article-box"],
@@ -621,9 +636,6 @@
                 document.addEventListener("click", (e) => {
                     // https://greasyfork.org/zh-CN/scripts/20431-zhihu-link-redirect-fix
                     let dom = e.target;
-                    console.log(dom);
-                    console.log(e.currentTarget);
-                    console.log(dom.nodeName);
                     if (dom.nodeName.toUpperCase() === "A") {
                         let d = website.directLink;
                         if (matchRule(dom.href, d[0])) {
@@ -638,6 +650,21 @@
                         }
                     }
                 });
+            }
+
+            if ("bindClick" in website) {
+                document.addEventListener(
+                    "click",
+                    (e) => {
+                        let dom = e.target;
+                        let d = website.bindClick;
+                        let target = dom.closest(d[0]);
+                        if (target) {
+                            d[1].call(target, target);
+                        }
+                    },
+                    true
+                );
             }
 
             if ("start" in website) {
