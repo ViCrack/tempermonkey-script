@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.38.0
+// @version     1.39.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
 // @description 增加豆瓣
@@ -83,6 +83,7 @@
 // @match       *://m.so.com/s?q=*
 // @match       *://wap.sogou.com/web/*
 // @match       *://www.douban.com/*
+// @match       *://www.wxnmh.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -91,6 +92,11 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.wxnmh.com/*",
+            hide: [".hide-article-box"],
+            expand: ["#message_content"],
+        },
         {
             wildcard: "*://www.douban.com/*",
             directLink: ["*.douban.com/link2/?url=*", "url"],
