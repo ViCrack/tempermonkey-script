@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.43.0
+// @version     1.44.0
 // @author      baster
-// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，节省网址重定向时间，支持免登陆复制
+// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
+// @description 增加书签地球
 // @description 增加天眼查
 // @description 增加Gitee
 // @description 增加站长之家
@@ -92,6 +93,7 @@
 // @match       *://www.chinaz.com/*
 // @match       *://gitee.com/*
 // @match       *://www.tianyancha.com/*
+// @match       *://www.shaduizi.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -100,6 +102,11 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.shaduizi.com/*",
+            hide: [".content-container-open-btn"],
+            expand: [".content-section.content-section-container"],
+        },
         {
             wildcard: "*://www.chinaz.com/*",
             hide: [".contentPadding"],
