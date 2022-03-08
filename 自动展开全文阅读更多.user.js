@@ -3,44 +3,6 @@
 // @version     1.40.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
-// @description 增加百度搜索移动端, 去除网址重定向
-// @description 增加豆瓣
-// @description 增加搜狗搜索，360搜索去除网址重定向，加快打开速度
-// @description 改进去重网址重定向的代码
-// @description OSCHINA
-// @description 增加掘金 - PC端去除网址重定向
-// @description 增加当游
-// @description 增加新浪财经
-// @description 增加Python学习网 - 免登陆观看视频, 没有30秒的限制
-// @description 增加36氪
-// @description 增加慕课网
-// @description 增加知乎，去广告，下载app的悬浮按钮，就不使用app查看
-// @description 增加cnbeta
-// @description 增加百度新闻，并且去掉悬浮的'百度APP内阅读'的按钮
-// @description 腾讯新闻
-// @description 增加增加xuedingmiao 博客
-// @description 增加51cto，实现免登陆复制
-// @description 增加人民日报
-// @description CSDN剪贴板复制拦截小尾巴
-// @description 增加百度百科
-// @description 增加一点教程
-// @description 增加编程之家
-// @description 增加电子发烧友论坛
-// @description 增加米坛社区
-// @description 增加汽车之家
-// @description 增加百度知道
-// @description 增加bjtzdbzz
-// @description 增加好看视频
-// @description 增加21财经
-// @description 增加百度百家号
-// @description 增加百度经验
-// @description 增加CSDN
-// @description 增加简书
-// @description 增加码农之家
-// @description 增加环球网移动端
-// @description 增加联想知识库解决需要扫码关注才可继续浏览内容
-// @description 增加太平洋电脑网
-// @description 增加IT1352 IT屋，解决需要扫码关注15天内才能阅读全文
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
 // @homepageURL https://greasyfork.org/zh-CN/users/306433
 // @namespace   https://greasyfork.org/zh-CN/users/306433
