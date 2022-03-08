@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.40.0
+// @version     1.44.0
 // @author      baster
-// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，网址重定向优化，支持免登陆复制
+// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
 // @homepageURL https://greasyfork.org/zh-CN/users/306433
 // @namespace   https://greasyfork.org/zh-CN/users/306433
@@ -41,13 +41,17 @@
 // @match       *://*.py.cn/code/*
 // @match       *://finance.sina.com.cn/*
 // @match       *://juejin.cn/post/*
-// @match       *://www.oschina.net/p/*
+// @match       *://www.oschina.net/*
 // @match       *://iswbm.com/*
 // @match       *://m.so.com/s?q=*
 // @match       *://wap.sogou.com/web/*
 // @match       *://www.douban.com/*
 // @match       *://www.wxnmh.com/*
 // @match       *://m.baidu.com/*
+// @match       *://www.chinaz.com/*
+// @match       *://gitee.com/*
+// @match       *://www.tianyancha.com/*
+// @match       *://www.shaduizi.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -56,6 +60,32 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.shaduizi.com/*",
+            hide: [".content-container-open-btn"],
+            expand: [".content-section.content-section-container"],
+        },
+        {
+            wildcard: "*://www.chinaz.com/*",
+            hide: [".contentPadding"],
+            expand: ["#article-content"],
+        },
+        {
+            wildcard: "*://www.tianyancha.com/*",
+            bindClick: [
+                "a[href^=http]",
+                (node, e) => {
+                    if (node.target == "_blank") {
+                        e.stopPropagation();
+                    }
+                },
+            ],
+            directLink: ["*://www.tianyancha.com/security?target=*", "target"],
+        },
+        {
+            wildcard: "*://gitee.com/*",
+            directLink: ["*://gitee.com/link?target=*", "target"],
+        },
         {
             // 百度搜索移动端
             wildcard: "*://m.baidu.com/*",
@@ -92,9 +122,10 @@
             expand: ["#container"],
         },
         {
-            wildcard: "*://www.oschina.net/p/*",
+            wildcard: "*://www.oschina.net/*",
             hide: ["div.collapse-bar"],
             expand: ["div.article-detail"],
+            directLink: ["*://www.oschina.net/action/GoToLink?url=*", "url"],
         },
         {
             wildcard: "*://juejin.cn/post/*",
@@ -306,19 +337,12 @@
             wildcard: "*://www.jianshu.com/p/*",
             hide: [".note-graceful-button p", ".download-app-guidance", ".call-app-btn", "#jianshu-header", "#note-show .content .show-content-free .collapse-tips", ".download", ".note-comment-above-ad-wrap", ".close-collapse-btn", ".open-app-btn", ".app-open", "#guangtui", "#fixed-ad-container", ".fubiao-dialog"],
             expand: ["#note-show .content .show-content-free .collapse-free-content"],
+            directLink: ["https://links.jianshu.com/go?to=*", "to"],
             js: () => {
                 let node = document.querySelector(".collapse-free-content");
                 if (node) {
                     node.removeAttribute("class");
                 }
-
-                let nodes = document.querySelectorAll("a[href^='https://links.jianshu.com/go?to=']");
-                nodes.forEach((node) => {
-                    let link = getUrlQuery(node.href).to;
-                    if (link) {
-                        node.setAttribute("href", link);
-                    }
-                });
             },
         },
         {
@@ -335,6 +359,7 @@
             wildcard: "*://blog.csdn.net/*",
             hide: [".weixin-shadowbox.wap-shadowbox", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
             expand: [".article_content", "#article_content", "#comment"],
+            directLink: ["*://link.csdn.net/?target=*", "target"],
             js: () => {
                 safeWaitJQuery(() => {
                     jQuery(function () {
@@ -375,19 +400,30 @@
         return new RegExp("^" + rule.split("*").map(escapeRegex).join(".*") + "$").test(str);
     }
 
-    function getUrlQuery(url, urldecode = true) {
-        let obj = {};
-        let keyvalue = [];
-        let key = "",
-            value = "";
-        let paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
-        for (let i in paraString) {
-            keyvalue = paraString[i].split("=");
-            key = keyvalue[0];
-            value = keyvalue[1];
-            obj[key] = urldecode ? decodeURIComponent(value) : value;
+    // https://greasyfork.org/zh-CN/scripts/416338
+    function parseUrl(href) {
+        if (!href) return {};
+        let search;
+
+        try {
+            // 链接
+            const url = new URL(href);
+            ({ search } = url); // 主要处理对hash的search
+
+            if (!search && url.hash.includes("?")) {
+                search = url.hash.split("?")[1];
+            }
+        } catch {
+            // 非链接,如：a=1&b=2、?a=1、/foo?a=1、/foo#bar?a=1
+            if (href.includes("?")) {
+                search = href.split("?")[1];
+            } else {
+                search = href;
+            }
         }
-        return obj;
+
+        const searchParams = new URLSearchParams(search);
+        return [...searchParams.entries()].reduce((acc, [key, value]) => ((acc[key] = value), acc), {});
     }
 
     function randomString(length, chars) {
@@ -604,7 +640,7 @@
                             if (typeof d[1] === "function") {
                                 d[1].call(dom, dom);
                             } else {
-                                let param = getUrlQuery(dom.href);
+                                let param = parseUrl(dom.href);
                                 if (param[d[1]]) {
                                     dom.href = param[d[1]];
                                 }
@@ -622,7 +658,7 @@
                         let d = website.bindClick;
                         let target = dom.closest(d[0]);
                         if (target) {
-                            d[1].call(target, target);
+                            d[1].call(target, target, e);
                         }
                     },
                     true
