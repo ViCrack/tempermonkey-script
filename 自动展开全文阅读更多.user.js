@@ -52,6 +52,7 @@
 // @match       *://gitee.com/*
 // @match       *://www.tianyancha.com/*
 // @match       *://www.shaduizi.com/*
+// @match       *://show.bookmarkearth.com/view/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -60,6 +61,15 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://show.bookmarkearth.com/view/*",
+            js: () => {
+                let node = document.querySelector("p.link");
+                if (node) {
+                    location.replace(node.innerText);
+                }
+            },
+        },
         {
             wildcard: "*://www.shaduizi.com/*",
             hide: [".content-container-open-btn"],
