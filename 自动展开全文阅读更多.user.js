@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.45.1
+// @version     1.47.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -55,6 +55,8 @@
 // @match       *://show.bookmarkearth.com/view/*
 // @match       *://www.423down.com/*
 // @match       *://www.itdaan.com/*
+// @match       *://www.iteye.com/blog/*
+// @match       *://www.360doc.com/content/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -63,6 +65,18 @@
 
 (function () {
     var websites = [
+        {
+            // http://www.360doc.com/content/20/0805/05/71057272_928578782.shtml
+            wildcard: "*://www.360doc.com/content/*",
+            hide: [".article_showall"],
+            expand: ["#articlecontent"],
+        },
+        {
+            // https://www.iteye.com/blog/agile-boy-274366
+            wildcard: "*://www.iteye.com/blog/*",
+            hide: [".hide-article-box"],
+            expand: ["#blog_content"],
+        },
         {
             wildcard: "*://www.423down.com/*",
             directLink: [
