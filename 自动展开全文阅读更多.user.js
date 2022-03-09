@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.47.0
+// @version     1.49.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -57,6 +57,8 @@
 // @match       *://www.itdaan.com/*
 // @match       *://www.iteye.com/blog/*
 // @match       *://www.360doc.com/content/*
+// @match       *://developer.aliyun.com/*
+// @match       *://cloud.tencent.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -65,6 +67,18 @@
 
 (function () {
     var websites = [
+        {
+            // https://cloud.tencent.com/developer/article/1953552
+            wildcard: "*://cloud.tencent.com/*",
+            hide: [".com-markdown-collpase-hide .com-markdown-collpase-toggle"],
+            expand: [".com-markdown-collpase-hide .com-markdown-collpase-main"],
+        },
+        {
+            // https://developer.aliyun.com/article/875173
+            wildcard: "*://developer.aliyun.com/*",
+            hide: ["#btn-readmore", ".article-hide-box"],
+            expand: [".article-hide-content"],
+        },
         {
             // http://www.360doc.com/content/20/0805/05/71057272_928578782.shtml
             wildcard: "*://www.360doc.com/content/*",
