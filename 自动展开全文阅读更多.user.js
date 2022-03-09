@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.45.0
+// @version     1.45.1
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -54,7 +54,7 @@
 // @match       *://www.shaduizi.com/*
 // @match       *://show.bookmarkearth.com/view/*
 // @match       *://www.423down.com/*
-// @match       *://www.itdaan.com/blog/*
+// @match       *://www.itdaan.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -76,12 +76,26 @@
             ],
         },
         {
-            // https://www.itdaan.com/blog/2012/10/20/f602af516f225c8031674c5dea640774.html
-            wildcard: "*://www.itdaan.com/blog/*",
+            // https://www.itdaan.com/blog/2019/08/06/1b407ea67c33df1c625ab657443ccd45.html
+            wildcard: "*://www.itdaan.com/*",
             js: () => {
-                setCookie("openid", "1", 365);
-                setCookie("loginCode", "1", 365);
+                if (!$.cookie("openid") || !$.cookie("loginCode")) {
+                    setCookie("openid", "1", 365);
+                    setCookie("loginCode", "1", 365);
+                }
+                if ($.cookie("vipuser") != "1") {
+                    $.cookie("vipuser", "1");
+                }
             },
+            directLink: [
+                "*://www.itdaan.com/link/*",
+                (node) => {
+                    let url = node.href.split("/link/", 2)[1];
+                    if (url) {
+                        node.href = atob(url);
+                    }
+                },
+            ],
         },
         {
             wildcard: "*://show.bookmarkearth.com/view/*",
