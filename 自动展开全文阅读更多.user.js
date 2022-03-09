@@ -70,7 +70,7 @@
         {
             // https://cloud.tencent.com/developer/article/1953552
             wildcard: "*://cloud.tencent.com/*",
-            hide: [".com-markdown-collpase-hide .com-markdown-collpase-toggle"],
+            hide: [".com-markdown-collpase-hide .com-markdown-collpase-toggle", ".J-headerAdvertising", ".c-nav-advertising"],
             expand: [".com-markdown-collpase-hide .com-markdown-collpase-main"],
         },
         {
