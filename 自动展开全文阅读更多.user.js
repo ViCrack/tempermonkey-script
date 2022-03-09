@@ -53,6 +53,7 @@
 // @match       *://www.tianyancha.com/*
 // @match       *://www.shaduizi.com/*
 // @match       *://show.bookmarkearth.com/view/*
+// @match       *://www.423down.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -61,6 +62,18 @@
 
 (function () {
     var websites = [
+        {
+            wildcard: "*://www.423down.com/*",
+            directLink: [
+                "*://www.423down.com/go.php?url=*",
+                (node) => {
+                    let { url } = parseUrl(node.href);
+                    if (url) {
+                        node.href = atob(url);
+                    }
+                },
+            ],
+        },
         {
             wildcard: "*://show.bookmarkearth.com/view/*",
             js: () => {
@@ -641,23 +654,28 @@
 
             if ("directLink" in website) {
                 // 去除链接重定向
-                document.addEventListener("click", (e) => {
-                    // https://greasyfork.org/zh-CN/scripts/20431-zhihu-link-redirect-fix
-                    let dom = e.target;
-                    if (dom.nodeName.toUpperCase() === "A") {
-                        let d = website.directLink;
-                        if (matchRule(dom.href, d[0])) {
-                            if (typeof d[1] === "function") {
-                                d[1].call(dom, dom);
-                            } else {
-                                let param = parseUrl(dom.href);
-                                if (param[d[1]]) {
-                                    dom.href = param[d[1]];
+                document.addEventListener(
+                    "click",
+                    (e) => {
+                        // https://greasyfork.org/zh-CN/scripts/20431-zhihu-link-redirect-fix
+                        let dom = e.target;
+                        let target = dom.closest("a[href]");
+                        if (target) {
+                            let d = website.directLink;
+                            if (matchRule(target.href, d[0])) {
+                                if (typeof d[1] === "function") {
+                                    d[1].call(target, target);
+                                } else {
+                                    let param = parseUrl(target.href);
+                                    if (param[d[1]]) {
+                                        target.href = param[d[1]];
+                                    }
                                 }
                             }
                         }
-                    }
-                });
+                    },
+                    true
+                );
             }
 
             if ("bindClick" in website) {
