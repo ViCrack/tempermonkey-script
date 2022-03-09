@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.44.0
+// @version     1.45.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -53,6 +53,7 @@
 // @match       *://www.tianyancha.com/*
 // @match       *://www.shaduizi.com/*
 // @match       *://show.bookmarkearth.com/view/*
+// @match       *://www.itdaan.com/blog/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -61,6 +62,14 @@
 
 (function () {
     var websites = [
+        {
+            // https://www.itdaan.com/blog/2012/10/20/f602af516f225c8031674c5dea640774.html
+            wildcard: "*://www.itdaan.com/blog/*",
+            js: () => {
+                setCookie("openid", "1", 365);
+                setCookie("loginCode", "1", 365);
+            },
+        },
         {
             wildcard: "*://show.bookmarkearth.com/view/*",
             js: () => {
