@@ -80,11 +80,11 @@
             wildcard: "*://www.itdaan.com/*",
             js: () => {
                 if (!$.cookie("openid") || !$.cookie("loginCode")) {
-                    setCookie("openid", "1", 365);
-                    setCookie("loginCode", "1", 365);
+                    $.cookie("openid", "1", { expires: 7 });
+                    $.cookie("loginCode", "1", { expires: 7 });
                 }
                 if ($.cookie("vipuser") != "1") {
-                    $.cookie("vipuser", "1");
+                    $.cookie("vipuser", "1", { expires: 7 });
                 }
             },
             directLink: [
