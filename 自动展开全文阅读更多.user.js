@@ -76,7 +76,7 @@
             directLink: [
                 "*://jump*.bdimg.com/safecheck/index?url=*",
                 (node) => {
-                    if (node.innerText.startsWith("http")) {
+                    if (/^https?:/.test(node.innerText)) {
                         node.href = node.innerText;
                     }
                 },
