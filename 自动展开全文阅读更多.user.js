@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.49.0
+// @version     1.50.0
 // @author      baster
-// @description 自动展开网站内容而无需点击，去掉部分烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
+// @description 自动展开网站内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
 // @homepageURL https://greasyfork.org/zh-CN/users/306433
 // @namespace   https://greasyfork.org/zh-CN/users/306433
@@ -59,6 +59,7 @@
 // @match       *://www.360doc.com/content/*
 // @match       *://developer.aliyun.com/*
 // @match       *://cloud.tencent.com/*
+// @match       *://mail.qq.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -68,31 +69,42 @@
 (function () {
     var websites = [
         {
+            match: "*://mail.qq.com/*",
+            bindClick: [
+                "a[href^=http]",
+                (node, e) => {
+                    if (node.target == "_blank" && !node.href.includes("mail.qq.com")) {
+                        e.stopPropagation();
+                    }
+                },
+            ],
+        },
+        {
             // https://cloud.tencent.com/developer/article/1953552
-            wildcard: "*://cloud.tencent.com/*",
+            match: "*://cloud.tencent.com/*",
             hide: [".com-markdown-collpase-hide .com-markdown-collpase-toggle", ".J-headerAdvertising", ".c-nav-advertising"],
             expand: [".com-markdown-collpase-hide .com-markdown-collpase-main"],
         },
         {
             // https://developer.aliyun.com/article/875173
-            wildcard: "*://developer.aliyun.com/*",
+            match: "*://developer.aliyun.com/*",
             hide: ["#btn-readmore", ".article-hide-box"],
             expand: [".article-hide-content"],
         },
         {
             // http://www.360doc.com/content/20/0805/05/71057272_928578782.shtml
-            wildcard: "*://www.360doc.com/content/*",
+            match: "*://www.360doc.com/content/*",
             hide: [".article_showall"],
             expand: ["#articlecontent"],
         },
         {
             // https://www.iteye.com/blog/agile-boy-274366
-            wildcard: "*://www.iteye.com/blog/*",
+            match: "*://www.iteye.com/blog/*",
             hide: [".hide-article-box"],
             expand: ["#blog_content"],
         },
         {
-            wildcard: "*://www.423down.com/*",
+            match: "*://www.423down.com/*",
             directLink: [
                 "*://www.423down.com/go.php?url=*",
                 (node) => {
@@ -105,7 +117,7 @@
         },
         {
             // https://www.itdaan.com/blog/2019/08/06/1b407ea67c33df1c625ab657443ccd45.html
-            wildcard: "*://www.itdaan.com/*",
+            match: "*://www.itdaan.com/*",
             js: () => {
                 if (!$.cookie("openid") || !$.cookie("loginCode")) {
                     $.cookie("openid", "1", { expires: 7 });
@@ -126,7 +138,7 @@
             ],
         },
         {
-            wildcard: "*://show.bookmarkearth.com/view/*",
+            match: "*://show.bookmarkearth.com/view/*",
             js: () => {
                 let node = document.querySelector("p.link");
                 if (node) {
@@ -135,17 +147,17 @@
             },
         },
         {
-            wildcard: "*://www.shaduizi.com/*",
+            match: "*://www.shaduizi.com/*",
             hide: [".content-container-open-btn"],
             expand: [".content-section.content-section-container"],
         },
         {
-            wildcard: "*://www.chinaz.com/*",
+            match: "*://www.chinaz.com/*",
             hide: [".contentPadding"],
             expand: ["#article-content"],
         },
         {
-            wildcard: "*://www.tianyancha.com/*",
+            match: "*://www.tianyancha.com/*",
             bindClick: [
                 "a[href^=http]",
                 (node, e) => {
@@ -157,12 +169,12 @@
             directLink: ["*://www.tianyancha.com/security?target=*", "target"],
         },
         {
-            wildcard: "*://gitee.com/*",
+            match: "*://gitee.com/*",
             directLink: ["*://gitee.com/link?target=*", "target"],
         },
         {
             // 百度搜索移动端
-            wildcard: "*://m.baidu.com/*",
+            match: "*://m.baidu.com/*",
             bindClick: [
                 "div.result",
                 (node) => {
@@ -174,48 +186,48 @@
             ],
         },
         {
-            wildcard: "*://www.wxnmh.com/*",
+            match: "*://www.wxnmh.com/*",
             hide: [".hide-article-box"],
             expand: ["#message_content"],
         },
         {
-            wildcard: "*://www.douban.com/*",
+            match: "*://www.douban.com/*",
             directLink: ["*.douban.com/link2/?url=*", "url"],
         },
         {
-            wildcard: "*://wap.sogou.com/web/*",
+            match: "*://wap.sogou.com/web/*",
             directLink: ["*://wap.sogou.com/web/id=*&url=*", "url"],
         },
         {
-            wildcard: "*://m.so.com/s?q=*",
+            match: "*://m.so.com/s?q=*",
             directLink: ["*.so.com/jump?u=*", "u"],
         },
         {
-            wildcard: "*://iswbm.com/*",
+            match: "*://iswbm.com/*",
             hide: ["#read-more-wrap"],
             expand: ["#container"],
         },
         {
-            wildcard: "*://www.oschina.net/*",
+            match: "*://www.oschina.net/*",
             hide: ["div.collapse-bar"],
             expand: ["div.article-detail"],
             directLink: ["*://www.oschina.net/action/GoToLink?url=*", "url"],
         },
         {
-            wildcard: "*://juejin.cn/post/*",
+            match: "*://juejin.cn/post/*",
             directLink: ["*link.juejin.cn/?target=*", "target"],
         },
         {
-            wildcard: "*://www.3h3.com/soft/*",
+            match: "*://www.3h3.com/soft/*",
             hide: ["#showmore"],
             expand: ["#ctext"],
         },
         {
-            wildcard: "*://finance.sina.com.cn/*",
+            match: "*://finance.sina.com.cn/*",
             hide: ["#sina-cont000", "#sina-pages-u"],
         },
         {
-            wildcard: "*://*.py.cn/code/*",
+            match: "*://*.py.cn/code/*",
             start: () => {
                 unsafeWindow.IsLevelDate = 1;
                 Object.defineProperty(unsafeWindow, "IsLevelDate", {
@@ -235,17 +247,17 @@
             },
         },
         {
-            wildcard: "*://m.36kr.com/*",
+            match: "*://m.36kr.com/*",
             hide: [".kr-mobile-goapp", ".article-goapp", ".float-app-button-wrp", ".article-top-swiper-goapp"],
             expand: ["#body-content"],
         },
         {
-            wildcard: "*://m.imooc.com/*",
+            match: "*://m.imooc.com/*",
             hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload"],
             expand: ["#wap_wenda_detail", "#wenda_content"],
         },
         {
-            wildcard: "*://zhuanlan.zhihu.com/p/*",
+            match: "*://zhuanlan.zhihu.com/p/*",
             hide: [".OpenInAppButton"],
             css: `
                 [class^="css-"][href]{
@@ -255,7 +267,7 @@
             directLink: ["*link.zhihu.com/?target=*", "target"],
         },
         {
-            wildcard: "*://www.zhihu.com/question/*",
+            match: "*://www.zhihu.com/question/*",
             hide: [".OpenInAppButton", ".openInApp", ".DownloadGuide", ".Pc-feedAd-container", ".MobileAppHeader-downloadLink", ".ContentItem-expandButton", ".AdBelowMoreAnswers", ".MBannerAd"],
             expand: [".RichContent-inner--collapsed", ".RichContent-inner"],
             wait: [
@@ -270,27 +282,27 @@
             directLink: ["*link.zhihu.com/?target=*", "target"],
         },
         {
-            wildcard: "*://www.cnbeta.com/articles/*",
+            match: "*://www.cnbeta.com/articles/*",
             hide: ["div[style='display:block !important;position:fixed;bottom:0;margin-top:10px;width:100%;background:#c44;color:#fff;font-size:15px;z-index:99999']"],
         },
         {
-            wildcard: "*://xw.qq.com/cmsid/*",
+            match: "*://xw.qq.com/cmsid/*",
             hide: [".collapseWrapper", ".redbag.item"],
             expand: ["#article_body"],
         },
         {
             // https://xw.qq.com/amphtml/20220222A03ZFF00
-            wildcard: "*://xw.qq.com/amphtml/*",
+            match: "*://xw.qq.com/amphtml/*",
             hide: ["div.ct-unfold"],
             expand: [".article-main.fold"],
         },
         {
-            wildcard: "*://xuedingmiao.com/*",
+            match: "*://xuedingmiao.com/*",
             hide: ["#read-more-wrap"],
             expand: ["#main-content"],
         },
         {
-            wildcard: "*://blog.51cto.com/*",
+            match: "*://blog.51cto.com/*",
             js: () => {
                 jQuery(function () {
                     $(".copy_btn").removeClass("disable");
@@ -320,12 +332,12 @@
             },
         },
         {
-            wildcard: "*://wap.peopleapp.com/article/*",
+            match: "*://wap.peopleapp.com/article/*",
             hide: [".read-more"],
             expand: [".article-wrapper.has-more-high"],
         },
         {
-            wildcard: "*://baike.baidu.com/item/*",
+            match: "*://baike.baidu.com/item/*",
             wait: [
                 [
                     // 需要循环?
@@ -335,57 +347,57 @@
             ],
         },
         {
-            wildcard: ["*://m.jb51.cc/*", "*://www.jb51.cc/*"],
+            match: ["*://m.jb51.cc/*", "*://www.jb51.cc/*"],
             hide: ["#read-more-wrap"],
             expand: ["#container"],
         },
         {
-            wildcard: "*://www.yiidian.com/*",
+            match: "*://www.yiidian.com/*",
             hide: ["#read-more-wrap"],
             expand: ["#yArticle"],
         },
         {
-            wildcard: "*://bbs.elecfans.com/m/*",
+            match: "*://bbs.elecfans.com/m/*",
             hide: [".conMore", ".login-reg-fixed"],
             expand: [".postListCon"],
         },
         {
-            wildcard: "*://www.bandbbs.cn/threads/*",
+            match: "*://www.bandbbs.cn/threads/*",
             hide: [".bbCodeBlock-expandLink.js-expandLink"],
             wait: [[".js-expandWatch:not(.is-expanded)", (node) => node.classList.add("is-expanded")]],
         },
         {
-            wildcard: "*://chejiahao.m.autohome.com.cn/info/*",
+            match: "*://chejiahao.m.autohome.com.cn/info/*",
             hide: ["#continue_reading"],
             expand: [".major-long-details"],
             wait: [[".pgc-details .fn-hide", (node) => node.classList.remove("fn-hide")]],
         },
         {
-            wildcard: "*://www.bjtzdbzz.com/*",
+            match: "*://www.bjtzdbzz.com/*",
             hide: [".pc-request-btn", ".mb-request-btn"],
             expand: [".detail-content-desc-show"],
         },
         {
-            wildcard: "*://m.21jingji.com/article/*",
+            match: "*://m.21jingji.com/article/*",
             hide: [".content .mask"],
             expand: [".txtContent"],
         },
         {
-            wildcard: "*://zhidao.baidu.com/question/*",
+            match: "*://zhidao.baidu.com/question/*",
             hide: [".w-detail-display-btn-text", ".wgt-best-mask"],
             expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]"],
         },
         {
-            wildcard: "*://haokan.baidu.com/v*",
+            match: "*://haokan.baidu.com/v*",
             hide: [".share-origin.wx-share-launch"],
         },
         {
-            wildcard: "*://www.xz577.com/*",
+            match: "*://www.xz577.com/*",
             hide: [".article-content-body-more1"],
             expand: [".con2"],
         },
         {
-            wildcard: "*://www.it1352.com/*",
+            match: "*://www.it1352.com/*",
             hide: [".arc-body-main-more"],
             expand: [".arc-body-main"],
             js: () => {
@@ -396,17 +408,17 @@
             },
         },
         {
-            wildcard: "*://g.pconline.com.cn/*",
+            match: "*://g.pconline.com.cn/*",
             hide: [".btnForAppOpenA", ".btnForAppOpenImg", ".add_artilce_handle", ".WakeUptop"],
             expand: [".art-content"],
         },
         {
-            wildcard: "*://m.huanqiu.com/*",
+            match: "*://m.huanqiu.com/*",
             hide: [".unfold-btn"],
             expand: [".article-content"],
         },
         {
-            wildcard: "*://iknow.lenovo.com.cn/*",
+            match: "*://iknow.lenovo.com.cn/*",
             hide: [".coverQRCode"],
             js: () => {
                 localStorage.setItem("scanQRCode", "1");
@@ -414,7 +426,7 @@
             },
         },
         {
-            wildcard: "*://www.jianshu.com/p/*",
+            match: "*://www.jianshu.com/p/*",
             hide: [".note-graceful-button p", ".download-app-guidance", ".call-app-btn", "#jianshu-header", "#note-show .content .show-content-free .collapse-tips", ".download", ".note-comment-above-ad-wrap", ".close-collapse-btn", ".open-app-btn", ".app-open", "#guangtui", "#fixed-ad-container", ".fubiao-dialog"],
             expand: ["#note-show .content .show-content-free .collapse-free-content"],
             directLink: ["https://links.jianshu.com/go?to=*", "to"],
@@ -427,7 +439,7 @@
         },
         {
             // 百度新闻, 百家号
-            wildcard: ["*://baijiahao.baidu.com/s*", "*://ext.baidu.com/api/comment/v1/page/list*", "*://mbd.baidu.com/newspage/*", "*://www.baidu.com/#iact=wiseindex/tabs/news/activity/newsdetail=*"],
+            match: ["*://baijiahao.baidu.com/s*", "*://ext.baidu.com/api/comment/v1/page/list*", "*://mbd.baidu.com/newspage/*", "*://www.baidu.com/#iact=wiseindex/tabs/news/activity/newsdetail=*"],
             hide: [".packupButton", ".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined"],
             expand: [".mainContent"],
             wait: [
@@ -436,7 +448,7 @@
             ],
         },
         {
-            wildcard: "*://blog.csdn.net/*",
+            match: "*://blog.csdn.net/*",
             hide: [".weixin-shadowbox.wap-shadowbox", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
             expand: [".article_content", "#article_content", "#comment"],
             directLink: ["*://link.csdn.net/?target=*", "target"],
@@ -469,7 +481,7 @@
             },
         },
         {
-            wildcard: "*://jingyan.baidu.com/article/*",
+            match: "*://jingyan.baidu.com/article/*",
             hide: [".read-whole-mask"],
             expand: [".exp-content-container"],
         },
@@ -619,10 +631,10 @@
 
     for (var website of websites) {
         let hit = false;
-        if (Array.isArray(website.wildcard)) {
-            hit = website.wildcard.some((s) => matchRule(window.location.href, s));
+        if (Array.isArray(website.match)) {
+            hit = website.match.some((s) => matchRule(window.location.href, s));
         } else {
-            hit = matchRule(window.location.href, website.wildcard);
+            hit = matchRule(window.location.href, website.match);
         }
 
         if (hit) {
