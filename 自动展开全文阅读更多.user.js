@@ -74,7 +74,7 @@
             match: "*://tieba.baidu.com/*",
             hide: [".appPromote", ".appBottomPromote", ".frs_daoliu_for_app", ".pb_cut_hot_recommend", ".father-cut-daoliu-normal-box", ".father-cut-daoliu-from-toutiao-box"],
             directLink: [
-                "*://jump.bdimg.com/safecheck/index?url=*",
+                "*://jump*.bdimg.com/safecheck/index?url=*",
                 (node) => {
                     if (node.innerText.startsWith("http")) {
                         node.href = node.innerText;
