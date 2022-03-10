@@ -70,6 +70,7 @@
 (function () {
     var websites = [
         {
+            // https://tieba.baidu.com/p/7412962296
             match: "*://tieba.baidu.com/*",
             directLink: [
                 "*://jump.bdimg.com/safecheck/index?url=*",
