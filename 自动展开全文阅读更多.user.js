@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.50.0
+// @version     1.51.0
 // @author      baster
 // @description 自动展开网站内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -60,6 +60,7 @@
 // @match       *://developer.aliyun.com/*
 // @match       *://cloud.tencent.com/*
 // @match       *://mail.qq.com/*
+// @match       *://tieba.baidu.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -68,6 +69,17 @@
 
 (function () {
     var websites = [
+        {
+            match: "*://tieba.baidu.com/*",
+            directLink: [
+                "*://jump.bdimg.com/safecheck/index?url=*",
+                (node) => {
+                    if (node.innerText.startsWith("http")) {
+                        node.href = node.innerText;
+                    }
+                },
+            ],
+        },
         {
             match: "*://mail.qq.com/*",
             bindClick: [
