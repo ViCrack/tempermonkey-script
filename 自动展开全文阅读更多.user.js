@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.52.0
+// @version     1.53.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，支持手机和电脑端。 -- 【前期脚本更新可能会比较频繁】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -37,7 +37,7 @@
 // @match       *://www.cnbeta.com/articles/*
 // @match       *://www.zhihu.com/question/*
 // @match       *://zhuanlan.zhihu.com/p/*
-// @match       *://m.imooc.com/*
+// @match       *://*.imooc.com/*
 // @match       *://*.py.cn/code/*
 // @match       *://finance.sina.com.cn/*
 // @match       *://juejin.cn/post/*
@@ -63,6 +63,7 @@
 // @match       *://tieba.baidu.com/*
 // @match       *://www.tieba.com/*
 // @match       *://*.ifeng.com/*
+// @match       *://*.ximalaya.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -71,6 +72,12 @@
 
 (function () {
     var websites = [
+        {
+            // https://www.ximalaya.com/sound/357093858
+            match: ["*://www.ximalaya.com/*", "*://m.ximalaya.com/*"],
+            hide: [".more-intro-wrapper.cY_" , ".stretch-box .mask.ib_", "a.init-code.schema-link"],
+            expand: [".draft._Fc, .sound-intro .intro._Fc", ".stretch-box.ib_"],
+        },
         {
             // https://auto.ifeng.com/c/8EK6RQbD5U2
             // https://i.ifeng.com/c/8EJoQhvSkT3
@@ -278,9 +285,9 @@
             expand: ["#body-content"],
         },
         {
-            match: "*://m.imooc.com/*",
-            hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload"],
-            expand: ["#wap_wenda_detail", "#wenda_content"],
+            match: ["*://m.imooc.com/*", "*://www.imooc.com/*"],
+            hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload", ".detail-content.long-content .showMore"],
+            expand: ["#wap_wenda_detail", "#wenda_content", ".detail-content.long-content"],
         },
         {
             match: "*://zhuanlan.zhihu.com/p/*",
