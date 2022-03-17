@@ -81,7 +81,6 @@
             bindClick: [
                 "a[href^=http]",
                 (node, e) => {
-                    debugger;
                     if (node.target == "_blank" && !node.hostname.includes("bing.com")) {
                         e.stopPropagation();
                     }
