@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.57.1
+// @version     1.57.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十多个网站，前期脚本更新可能会比较频繁】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -460,7 +460,7 @@
         },
         {
             match: "*://haokan.baidu.com/v*",
-            hide: [".share-origin.wx-share-launch"],
+            hide: [".share-origin.wx-share-launch", ".player-pause-code-bottom-text", ".player-pause-code-inner"],
         },
         {
             match: "*://www.xz577.com/*",
