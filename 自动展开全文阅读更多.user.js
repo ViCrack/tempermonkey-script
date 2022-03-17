@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.57.0
+// @version     1.57.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十多个网站，前期脚本更新可能会比较频繁】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -576,7 +576,7 @@
             if (!search && url.hash.includes("?")) {
                 search = url.hash.split("?")[1];
             }
-        } catch {
+        } catch(err) {
             // 非链接,如：a=1&b=2、?a=1、/foo?a=1、/foo#bar?a=1
             if (href.includes("?")) {
                 search = href.split("?")[1];
