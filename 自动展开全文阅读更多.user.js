@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.59.1
+// @version     1.59.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十多个网站，前期脚本更新可能会比较频繁】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -545,16 +545,22 @@
         },
         {
             match: "*://blog.csdn.net/*",
-            hide: [".weixin-shadowbox.wap-shadowbox", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
+            hide: [".weixin-shadowbox.wap-shadowbox", ".readall_box", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
             expand: [".article_content", "#article_content", "#comment"],
             directLink: ["*://link.csdn.net/?target=*", "target"],
             js: () => {
                 safeWaitJQuery(() => {
                     jQuery(function () {
                         jQuery(function () {
+                            jQuery(".recommend-jump-app").removeAttr("id");
                             jQuery(".recommend-jump-app")
                                 .off("click")
-                                .on("click", (e) => e.stopPropagation());
+                                .on("click", (e) => {
+                                    let url = jQuery(this).find("a.flag").attr("href");
+                                    if (url) {
+                                        location.href = url;
+                                    }
+                                });
                             jQuery("[data-report-click]").removeAttr("data-report-click");
                             // $(document).off('click', '.container-blog a')
                             // $(document).off('click', '[data-report-click]')
