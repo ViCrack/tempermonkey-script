@@ -184,6 +184,14 @@
             match: "*://www.360doc.com/content/*",
             hide: [".article_showall"],
             expand: ["#articlecontent"],
+            bindClick: [
+                "a[href^=http]",
+                (node, e) => {
+                    if (node.target == "_blank" && !node.hostname.includes("360doc.com")) {
+                        e.stopPropagation();
+                    }
+                },
+            ],
         },
         {
             // https://www.iteye.com/blog/agile-boy-274366
@@ -593,7 +601,7 @@
             if (!search && url.hash.includes("?")) {
                 search = url.hash.split("?")[1];
             }
-        } catch(err) {
+        } catch (err) {
             // 非链接,如：a=1&b=2、?a=1、/foo?a=1、/foo#bar?a=1
             if (href.includes("?")) {
                 search = href.split("?")[1];
