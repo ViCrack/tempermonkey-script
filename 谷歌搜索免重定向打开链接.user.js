@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         谷歌搜索免重定向打开链接
 // @namespace    https://github.com/vicrack/
-// @version      0.1
-// @description  谷歌搜索免重定向打开链接, 网址直达加快打开速度, 模糊匹配谷歌地址
+// @version      0.1.1
+// @description  谷歌搜索免重定向打开链接, 网址直达加快打开速度, 采用模糊匹配谷歌搜索的网址
 // @author       https://greasyfork.org/zh-CN/users/306433
 // @supportURL   https://greasyfork.org/zh-CN/users/306433
 // @homepageURL  https://greasyfork.org/zh-CN/users/306433
@@ -27,6 +27,16 @@
             if (link.hasAttribute("onmousedown")) {
                 link.removeAttribute("onmousedown");
                 link.setAttribute("target", "_blank");
+            }
+            
+            // 避免泄露来源
+            let rel = link.getAttribute("rel");
+            if (rel != null) {
+                if (!rel.includes("noreferrer")) {
+                    link.setAttribute("rel", rel + " noreferrer");
+                }
+            } else {
+                link.setAttribute("rel", "noreferrer");
             }
             // image jsaction="J9iaEb;mousedown:npT2md; touchstart:npT2md;"
         };
