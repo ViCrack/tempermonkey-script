@@ -551,7 +551,7 @@
         },
         {
             match: "*://blog.csdn.net/*",
-            hide: [".weixin-shadowbox.wap-shadowbox", ".readall_box", "span.feed-Sign-span", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
+            hide: [".weixin-shadowbox.wap-shadowbox", "#m_toolbar_left .m_toolbar_left_app_btn", ".readall_box", "span.feed-Sign-span", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
             expand: [".article_content", "#article_content", "#comment"],
             directLink: ["*://link.csdn.net/?target=*", "target"],
             js: () => {
