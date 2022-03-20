@@ -567,16 +567,25 @@
                                         location.href = url;
                                     }
                                 });
-                            jQuery("[data-report-click]").removeAttr("data-report-click");
-                            // $(document).off('click', '.container-blog a')
-                            // $(document).off('click', '[data-report-click]')
-
-                            if (typeof csdn != "undefined") {
+                            jQuery("a[data-report-click]").removeAttr("data-report-click");
+                            jQuery("a[data-report-query]").removeAttr("data-report-query");
+                            if (typeof unsafeWindow.csdn != "undefined") {
                                 // https://github.com/adlered/CSDNGreener
-                                $("code").attr("onclick", "mdcp.copyCode(event)");
+                                jQuery("code").attr("onclick", "mdcp.copyCode(event)");
                                 try {
-                                    csdn.copyright.init("", "", "");
-                                    Object.defineProperty(window, "articleType", {
+                                    unsafeWindow.csdn.copyright.init("", "", "");
+                                } catch (err) {}
+                                try {
+                                    Object.defineProperty(unsafeWindow.csdn.report, "reportClick", {
+                                        value: function () {
+                                            return true;
+                                        },
+                                        writable: false,
+                                        configurable: false,
+                                    });
+                                } catch (err) {}
+                                try {
+                                    Object.defineProperty(unsafeWindow, "articleType", {
                                         value: 0,
                                         writable: false,
                                         configurable: false,
