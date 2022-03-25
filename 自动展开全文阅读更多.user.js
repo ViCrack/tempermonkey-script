@@ -24,7 +24,7 @@
 // @match       *://www.bjtzdbzz.com/*
 // @match       *://chejiahao.m.autohome.com.cn/info/*
 // @match       *://www.bandbbs.cn/threads/*
-// @match       *://bbs.elecfans.com/m/*
+// @match       *://*.elecfans.com/*
 // @match       *://www.yiidian.com/*
 // @match       *://m.jb51.cc/*
 // @match       *://www.jb51.cc/*
@@ -475,6 +475,11 @@
             match: "*://bbs.elecfans.com/m/*",
             hide: [".conMore", ".login-reg-fixed"],
             expand: [".postListCon"],
+        },
+        {
+            match: ["*://www.elecfans.com/*", "*://m.elecfans.com/*"],
+            hide: [".seeHide_new_login", ".open_app.open_app_fixed"],
+            expand: [".article_content", ".simditor .simditor-body"],
         },
         {
             match: "*://www.bandbbs.cn/threads/*",
