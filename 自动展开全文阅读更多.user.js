@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.63.0
+// @version     1.63.1
 // @author      baster
-// @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十多个网站，前期脚本更新可能会比较频繁】
+// @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十多个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
 // @homepageURL https://greasyfork.org/zh-CN/users/306433
 // @namespace   https://greasyfork.org/zh-CN/users/306433
