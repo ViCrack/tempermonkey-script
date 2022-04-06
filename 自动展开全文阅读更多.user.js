@@ -105,8 +105,8 @@
         {
             // https://wukong.toutiao.com/question/6712757183118835972/
             match: ["*://*.toutiao.com/*"],
-            hide: ["a.j-expand-showfull.expand-bottom"],
-            expand: ["div.answer-text-full"],
+            hide: ["a.j-expand-showfull.expand-bottom", ".m-share-answer .neck .mask", ".float-openapp"],
+            expand: ["div.answer-text-full", "article.content"],
         },
         {
             match: ["*://www.bilibili.com/read/mobile?id=*"],
