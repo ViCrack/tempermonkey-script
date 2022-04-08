@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.64.0
+// @version     1.65.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十多个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -75,6 +75,7 @@
 // @match       *://www.itbaoku.cn/*
 // @match       *://support.qq.com/*
 // @match       *://m.downxia.com/*
+// @match       *://m.sohu.com/a/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -83,6 +84,16 @@
 
 (function () {
     var websites = [
+        {
+            // https://m.sohu.com/a/442909096_120459022/?pvid=000115_3w_a
+            match: "*://m.sohu.com/a/*",
+            hide: [".lookall-box"],
+            css: `
+                .hidden-content.hide {
+                    display: block !important;
+                }
+            `,
+        },
         {
             match: "*://m.downxia.com/*",
             hide: ["a.slide-btn"],
