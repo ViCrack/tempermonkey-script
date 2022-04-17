@@ -909,6 +909,17 @@
                                     target.setAttribute("rel", "noreferrer");
                                 }
                             }
+                            // 处理拖拽
+                            if (e.dataTransfer && e.dataTransfer.getData) {
+                                e.dataTransfer.types.forEach((type) => {
+                                    if (type.includes("url") || type.includes("uri")) {
+                                        let url = e.dataTransfer.getData(type);
+                                        if (matchRule(url, d[0])) {
+                                            e.dataTransfer.setData(type, target.href);
+                                        }
+                                    }
+                                });
+                            }
                         }
                     }
                 };
@@ -917,6 +928,24 @@
 
                 document.addEventListener(
                     "dragstart",
+                    (e) => {
+                        if (e.target.nodeName == "A") {
+                            handleDirectLink(e);
+                        }
+                    },
+                    true
+                );
+                document.addEventListener(
+                    "dragover",
+                    (e) => {
+                        if (e.target.nodeName == "A") {
+                            handleDirectLink(e);
+                        }
+                    },
+                    true
+                );
+                document.addEventListener(
+                    "drop",
                     (e) => {
                         if (e.target.nodeName == "A") {
                             handleDirectLink(e);
