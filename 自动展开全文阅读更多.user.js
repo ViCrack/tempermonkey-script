@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.65.0
+// @version     1.65.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -882,35 +882,44 @@
 
             if ("directLink" in website) {
                 // 去除链接重定向
-                document.addEventListener(
-                    "click",
-                    (e) => {
-                        // https://greasyfork.org/zh-CN/scripts/20431-zhihu-link-redirect-fix
-                        let dom = e.target;
-                        let target = dom.closest("a[href]");
-                        if (target) {
-                            let d = website.directLink;
-                            if (matchRule(target.href, d[0])) {
-                                if (typeof d[1] === "function") {
-                                    d[1].call(target, target);
-                                } else {
-                                    let param = parseUrl(target.href);
-                                    if (param[d[1]]) {
-                                        target.href = param[d[1]];
-                                    }
-                                }
-                                // 避免泄露来源, 加强隐私保护
-                                if (target.target == "_blank") {
-                                    let rel = target.getAttribute("rel");
-                                    if (rel != null) {
-                                        if (!rel.includes("noreferrer")) {
-                                            target.setAttribute("rel", rel + " noreferrer");
-                                        }
-                                    } else {
-                                        target.setAttribute("rel", "noreferrer");
-                                    }
+
+                let handleDirectLink = (e) => {
+                    // https://greasyfork.org/zh-CN/scripts/20431-zhihu-link-redirect-fix
+                    let dom = e.target;
+                    let target = dom.closest("a[href]");
+                    if (target) {
+                        let d = website.directLink;
+                        if (matchRule(target.href, d[0])) {
+                            if (typeof d[1] === "function") {
+                                d[1].call(target, target);
+                            } else {
+                                let param = parseUrl(target.href);
+                                if (param[d[1]]) {
+                                    target.href = param[d[1]];
                                 }
                             }
+                            // 避免泄露来源, 加强隐私保护
+                            if (target.target == "_blank") {
+                                let rel = target.getAttribute("rel");
+                                if (rel != null) {
+                                    if (!rel.includes("noreferrer")) {
+                                        target.setAttribute("rel", rel + " noreferrer");
+                                    }
+                                } else {
+                                    target.setAttribute("rel", "noreferrer");
+                                }
+                            }
+                        }
+                    }
+                };
+
+                document.addEventListener("click", handleDirectLink, true);
+
+                document.addEventListener(
+                    "dragstart",
+                    (e) => {
+                        if (e.target.nodeName == "A") {
+                            handleDirectLink(e);
                         }
                     },
                     true
