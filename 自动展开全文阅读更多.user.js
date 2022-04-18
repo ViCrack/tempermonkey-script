@@ -133,7 +133,8 @@
             directLink: [
                 "*://link.segmentfault.com/?enc=*",
                 (node) => {
-                    if (/^https?:\/\//.test(node.innerText)) {
+                    // segmentfault这东西也去加密了?
+                    if (/^https?:\/\//.test(node.innerText) && !node.innerText.endsWith("...")) {
                         node.href = node.innerText;
                     }
                 },
