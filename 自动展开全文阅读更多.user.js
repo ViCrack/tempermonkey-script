@@ -141,6 +141,7 @@
             ],
         },
         {
+            // https://cn.bing.com/search?form=MOZSBR&pc=MOZI&q=GIT_CLEAN_FLAGS
             match: ["*://cn.bing.com/search?*"],
             bindClick: [
                 "a[href^=http]",
