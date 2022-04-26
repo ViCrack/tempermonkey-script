@@ -141,7 +141,7 @@
             ],
         },
         {
-            match: ["*://cn.bing.com/search?q=*"],
+            match: ["*://cn.bing.com/search?*"],
             bindClick: [
                 "a[href^=http]",
                 (node, e) => {
