@@ -443,8 +443,8 @@
         },
         {
             match: ["*://m.imooc.com/*", "*://www.imooc.com/*"],
-            hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload", ".detail-content.long-content .showMore"],
-            expand: ["#wap_wenda_detail", "#wenda_content", ".detail-content.long-content"],
+            hide: [".wenda-more-wrap.js-wenda-more", "#js-appload", ".js-footer-appload", ".detail-content.long-content .showMore", ".hide-articel-box", ".js-show-reply-btn.hide-answer-morebtn"],
+            expand: ["#wap_wenda_detail", "#wenda_content", ".detail-content.long-content", "#js-qa-wenda", ".answer-content"],
         },
         {
             match: "*://zhuanlan.zhihu.com/p/*",
