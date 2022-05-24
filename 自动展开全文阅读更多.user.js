@@ -80,7 +80,6 @@
 // @match       *://www.yunqishi.net/*
 // @match       *://stackoom.com/*
 // @match       *://www.codeprj.com/*
-// @match       *://www.codeprj.com/*
 // @match       *://m.yezicc.com/*
 // @match       *://app.ali213.net/*
 // @grant       GM_addStyle
