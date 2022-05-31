@@ -71,6 +71,7 @@
 // @match       *://segmentfault.com/*
 // @match       *://ld246.com/*
 // @match       *://www.bilibili.com/read/mobile?id=*
+// @match       *://m.bilibili.com/video/*
 // @match       *://*.toutiao.com/*
 // @match       *://www.itbaoku.cn/*
 // @match       *://support.qq.com/*
@@ -183,6 +184,10 @@
             match: ["*://www.bilibili.com/read/mobile?id=*"],
             hide: [".h5-download-bar", ".read-article-box .read-more .arrow-cnt"],
             expand: [".read-article-box.limit"],
+        },
+        {
+            match: ["*://m.bilibili.com/video/*"],
+            hide: [".launch-app-btn"],
         },
         {
             match: ["*://ld246.com/*"],
