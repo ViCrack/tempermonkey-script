@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.74.0
+// @version     1.74.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -644,7 +644,7 @@
             match: "*://www.jianshu.com/p/*",
             hide: [".note-graceful-button p", ".download-app-guidance", ".call-app-btn", "#jianshu-header", "#note-show .content .show-content-free .collapse-tips", ".download", ".note-comment-above-ad-wrap", ".close-collapse-btn", ".open-app-btn", ".app-open", "#guangtui", "#fixed-ad-container", ".fubiao-dialog"],
             expand: ["#note-show .content .show-content-free .collapse-free-content"],
-            directLink: ["*://link.jianshu.com/?t=*", "t"],
+            directLink: ["*://link.jianshu.com/?t=*", "t", "*://links.jianshu.com/go?to=*", "to"],
             js: () => {
                 let node = document.querySelector(".collapse-free-content");
                 if (node) {
@@ -960,24 +960,26 @@
                         let target = dom.closest("a[href]");
                         if (target) {
                             let d = website.directLink;
-                            if (matchRule(target.href, d[0])) {
-                                if (typeof d[1] === "function") {
-                                    d[1].call(target, target);
-                                } else {
-                                    let param = parseUrl(target.href);
-                                    if (param[d[1]]) {
-                                        target.href = param[d[1]];
-                                    }
-                                }
-                                // 避免泄露来源, 加强隐私保护
-                                if (target.target == "_blank") {
-                                    let rel = target.getAttribute("rel");
-                                    if (rel != null) {
-                                        if (!rel.includes("noreferrer")) {
-                                            target.setAttribute("rel", rel + " noreferrer");
-                                        }
+                            for (let i = 0; i < d.length; i += 2) {
+                                if (matchRule(target.href, d[i])) {
+                                    if (typeof d[i + 1] === "function") {
+                                        d[i + 1].call(target, target);
                                     } else {
-                                        target.setAttribute("rel", "noreferrer");
+                                        let param = parseUrl(target.href);
+                                        if (param[d[i + 1]]) {
+                                            target.href = param[d[i + 1]];
+                                        }
+                                    }
+                                    // 避免泄露来源, 加强隐私保护
+                                    if (target.target == "_blank") {
+                                        let rel = target.getAttribute("rel");
+                                        if (rel != null) {
+                                            if (!rel.includes("noreferrer")) {
+                                                target.setAttribute("rel", rel + " noreferrer");
+                                            }
+                                        } else {
+                                            target.setAttribute("rel", "noreferrer");
+                                        }
                                     }
                                 }
                             }
