@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.77.1
+// @version     1.77.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -568,7 +568,10 @@
                 [
                     // 需要循环?
                     ".yx-load-more-inner.J-yx-load-moreContent",
-                    (node) => node.dispatchEvent(new Event("tap")),
+                    (node) => {
+                        node.dispatchEvent(new Event("tap"));
+                        return document.getElementById("yx_load_more_flow").style.display == "none";
+                    },
                 ],
             ],
         },
@@ -938,7 +941,7 @@
 
             if ("wait" in website) {
                 // TODO 需要换种方式优化
-                let ready = {};
+                let ready = [];
                 let id = setInterval(() => {
                     try {
                         for (let w of website.wait) {
@@ -950,27 +953,34 @@
                                 } else {
                                     nodeList = document.querySelectorAll(w[0]);
                                 }
+                                let allNodeFinish = true;
                                 nodeList.forEach((node) => {
                                     if (!node.dataset[readyName]) {
                                         if (w[1] === "click") {
                                             node.dispatchEvent(new Event("click"));
                                             node.dispatchEvent(new Event("tap"));
                                         } else {
-                                            w[1].call(node, node); // 返回值
+                                            let callret = w[1].call(node, node); // 返回值
+                                            if (callret === false) {
+                                                allNodeFinish = callret;
+                                                return;
+                                            }
                                         }
                                         node.dataset[readyName] = true;
                                     }
-                                    ready[w[0]] = true;
                                 });
+                                if (allNodeFinish) {
+                                    ready.push(w[0]);
+                                }
                             }
                         }
-                        if (Object.keys(ready).length == website.wait.length) {
+                        if (ready.length == website.wait.length) {
                             clearInterval(id);
                         }
                     } catch (x) {
                         clearInterval(id);
                     }
-                }, 1000);
+                }, 2000);
             }
 
             if ("directLink" in website) {
