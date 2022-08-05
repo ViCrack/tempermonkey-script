@@ -616,8 +616,8 @@
         {
             // https://zhidao.baidu.com/question/423275263.html
             match: "*://zhidao.baidu.com/question/*",
-            hide: [".w-detail-display-btn-text", ".wgt-best-mask", ".wgt-answers-mask", ".wgt-question-desc-action"],
-            expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]", "div[id^=answer-content-]", ".wgt-question-desc-inner"],
+            hide: [".w-detail-display-btn-text", ".wgt-best-mask", ".wgt-answers-mask", ".wgt-question-desc-action", ".w-reply-text .unfold"],
+            expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]", "div[id^=answer-content-]", ".wgt-question-desc-inner", ".w-reply-text"],
             js: () => {
                 let e = document.getElementById("show-answer-hide");
                 if (e) {
@@ -916,6 +916,7 @@
                     height: auto !important;
                     max-height: unset !important;
                     overflow: unset !important;
+                    -webkit-line-clamp: none !important;
                 }
 
                 `;
