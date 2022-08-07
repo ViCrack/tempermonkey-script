@@ -76,7 +76,7 @@
 // @match       *://www.itbaoku.cn/*
 // @match       *://support.qq.com/*
 // @match       *://m.downxia.com/*
-// @match       *://m.sohu.com/*
+// @match       *://*.sohu.com/*
 // @match       *://m.weibo.cn/u/*
 // @match       *://card.weibo.com/*
 // @match       *://www.yunqishi.net/*
@@ -171,10 +171,10 @@
         },
         {
             // https://m.sohu.com/a/442909096_120459022/?pvid=000115_3w_a
-            match: "*://m.sohu.com/*",
+            match: "*://*.sohu.com/*",
             hide: [".lookall-box"],
             css: `
-                .hidden-content.hide {
+                .hidden-content.hide,.control-hide {
                     display: block !important;
                 }
             `,
