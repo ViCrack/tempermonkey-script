@@ -268,8 +268,8 @@
             // https://i.ifeng.com/c/8EJoQhvSkT3
             // https://ihouse.ifeng.com/news/2022_03_12-55263044_0.shtml
             match: "*://*.ifeng.com/*",
-            hide: ["div[class^='more-']", "div[class^='tip-']", "div.showall", "div[class^='more-1-']", "div[class^='bottom_box-'] > div[class^='box-']"],
-            expand: ["div[class^='main_content-']", "section.article"],
+            hide: ["section[class^='bottomSlide-']", "header[class^='headerIn-']", "div[class^='callupBtn-']", "div[class^='more-']", "div[class^='tip-']", "div.showall", "div[class^='more-1-']", "div[class^='bottom_box-'] > div[class^='box-']", "div[class^='containerBox-'] >  div[class^='shadow-']"],
+            expand: ["div[class^='main_content-']", "section.article", "div[class^='containerBox-']"],
             css: "#root>div[class^='main-'] {margin-bottom: unset !important;}",
         },
         {
