@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         去除TAPD水印
 // @namespace    https://greasyfork.org/zh-CN/users/306433
-// @version      0.2
+// @version      0.3
 // @description  去除tapd在页面中显示的用户名水印
 // @author       https://greasyfork.org/zh-CN/users/306433-baster
 // @supportURL   https://greasyfork.org/zh-CN/users/306433-baster
@@ -18,7 +18,7 @@
     var element = document.createElement("style");
     element.setAttribute("type", "text/css");
     document.head.appendChild(element);
-    element.textContent = ".dontdeleteme-div {background-size: 0px !important;} ";
+    element.textContent = ".dontdeleteme-div-clear {background-size: 0px !important;} ";
 
     /* MutationObserver delete+change_style
         .dontdeleteme-div {
