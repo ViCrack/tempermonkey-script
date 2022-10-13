@@ -598,7 +598,8 @@
                     ".yx-load-more-inner.J-yx-load-moreContent",
                     (node) => {
                         node.dispatchEvent(new Event("tap"));
-                        return document.getElementById("yx_load_more_flow").style.display == "none";
+                        document.getElementById("ui_refresh_down").style.display = "none";
+                        return false;
                     },
                 ],
             ],
