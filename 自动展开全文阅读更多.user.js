@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.85.0
+// @version     1.86.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -97,6 +97,7 @@
 // @match       *://code.js-code.com/*
 // @match       *://*wenda.so.com/*
 // @match       *://*.dxy.cn/*
+// @match       *://www.javaheidong.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -122,6 +123,21 @@
         },
         {
             match: ["*://www.pythonheidong.com/*"],
+            hide: [".ggbox"],
+            start: () => {
+                // 阻止牛皮癣弹框
+                unsafeWindow.user_login = true;
+                Object.defineProperty(unsafeWindow, "user_login", {
+                    get: function () {
+                        return true;
+                    },
+                    enumerable: true,
+                    configurable: true,
+                });
+            },
+        },
+        {
+            match: ["*://www.javaheidong.com/*"],
             hide: [".ggbox"],
             start: () => {
                 // 阻止牛皮癣弹框
