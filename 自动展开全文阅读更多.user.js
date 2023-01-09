@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.91.1
+// @version     1.91.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -769,7 +769,50 @@
         {
             match: "*://m.huanqiu.com/*",
             hide: [".unfold-btn"],
-            expand: [".article-content"],
+            expand: [".article-content", ".article .content"],
+            start: () => {
+                Element.prototype._attachShadow = Element.prototype.attachShadow;
+                Element.prototype.attachShadow = function () {
+                    let css = `
+                    .unfold-btn
+                    {
+                        display: none !important;
+                        visibility:hidden !important;
+                        max-height: 0 !important;
+                        max-width: 0 !important;
+                        height: 0 !important;
+                        width: 0 !important;
+                    }
+
+                    .article-content, .article .content
+                    {
+                        height: auto !important;
+                        max-height: unset !important;
+                        overflow: unset !important;
+                        -webkit-line-clamp: unset !important;
+                    }
+                    `;
+                    let style = document.createElement("style");
+                    style.type = "text/css";
+                    try {
+                        style.innerHTML = css;
+                    } catch (x) {
+                        style.innerText = css;
+                    }
+                    let shadow = this._attachShadow({ mode: "open" });
+                    shadow.appendChild(style);
+                    return shadow;
+                };
+            },
+            wait: [
+                [
+                    ".unfold-btn",
+                    (node) => {
+                        node.dispatchEvent(new Event("click"));
+                        node.dispatchEvent(new Event("tap"));
+                    },
+                ],
+            ],
         },
         {
             match: "*://iknow.lenovo.com.cn/*",
@@ -1084,7 +1127,7 @@
                                 } else {
                                     nodeList = document.querySelectorAll(w[0]);
                                 }
-                                let allNodeFinish = true;
+                                let allNodeFinish = nodeList.length > 0;
                                 nodeList.forEach((node) => {
                                     if (!node.dataset[readyName]) {
                                         if (w[1] === "click") {
@@ -1093,7 +1136,7 @@
                                         } else {
                                             let callret = w[1].call(node, node); // 返回值
                                             if (callret === false) {
-                                                allNodeFinish = callret;
+                                                allNodeFinish = false;
                                                 return;
                                             }
                                         }
