@@ -45,7 +45,7 @@
 // @match       *://iswbm.com/*
 // @match       *://m.so.com/s?q=*
 // @match       *://wap.sogou.com/web/*
-// @match       *://www.douban.com/*
+// @match       *://*.douban.com/*
 // @match       *://www.wxnmh.com/*
 // @match       *://m.baidu.com/*
 // @match       *://www.chinaz.com/*
@@ -520,8 +520,10 @@
             expand: ["#message_content"],
         },
         {
-            match: "*://www.douban.com/*",
+            match: "*://*.douban.com/*",
             directLink: ["*.douban.com/link2/?url=*", "url"],
+            hide: [".oia-readall"],
+            expand: [".note-content"],
         },
         {
             match: "*://wap.sogou.com/web/*",
