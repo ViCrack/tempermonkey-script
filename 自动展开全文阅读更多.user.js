@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.100.0
+// @version     1.100.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -16,6 +16,7 @@
 // @match       *://www.it1352.com/*
 // @match       *://www.jianshu.com/p/*
 // @match       *://blog.csdn.net/*
+// @match       *://download.csdn.net/download/*
 // @match       *://jingyan.baidu.com/article/*
 // @match       *://baijiahao.baidu.com/s*
 // @match       *://haokan.baidu.com/v*
@@ -110,6 +111,8 @@
 // @match       *://*.rstk.cn/*
 // @match       *://*.taodudu.cc/*
 // @match       *://weibo.com/ttarticle/p/show*
+// @match       *://weibo.com/cmbchina*
+// @match       *://weibo.com/u/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -118,6 +121,13 @@
 
 (function () {
     var websites = [
+        {
+            // https://weibo.com/cmbchina
+            match: ["*://weibo.com/cmbchina*", "*://weibo.com/u/*"],
+            wait: [
+                ["span.expand", "click"]
+            ]
+        },
         {
             // https://weibo.com/ttarticle/p/show?id=2309404890441668493647
             match: ["*://weibo.com/ttarticle/p/show*"],
@@ -911,6 +921,15 @@
             ],
         },
         {
+            match: ["*://download.csdn.net/download/*"],
+            js: () => {
+                let btn = $(".more-wrap").find(".el-button");
+                btn.removeAttr("data-report-click");
+                btn.click()
+                $("#desc-text").prop("checked", true);
+            }
+        },
+        {
             match: "*://blog.csdn.net/*",
             hide: [".weixin-shadowbox.wap-shadowbox", ".aside-header-fixed", ".hide-preCode-box", "#m_toolbar_left .m_toolbar_left_app_btn", ".readall_box", "span.feed-Sign-span", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div"],
             expand: [".article_content", "#article_content", "#comment", ".set-code-hide"],
@@ -1198,6 +1217,7 @@
                                         if (w[1] === "click") {
                                             node.dispatchEvent(new Event("click"));
                                             node.dispatchEvent(new Event("tap"));
+                                            node.click();
                                         } else {
                                             let callret = w[1].call(node, node); // 返回值
                                             if (callret === false) {
