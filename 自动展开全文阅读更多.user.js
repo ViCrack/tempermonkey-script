@@ -26,7 +26,8 @@
 // @match       *://chejiahao.m.autohome.com.cn/info/*
 // @match       *://www.bandbbs.cn/threads/*
 // @match       *://*.elecfans.com/*
-// @match       *://*yiidian.com/*
+// @match       *://yiidian.com/*
+// @match       *://*.yiidian.com/*
 // @match       *://m.jb51.cc/*
 // @match       *://www.jb51.cc/*
 // @match       *://baike.baidu.com/item/*
