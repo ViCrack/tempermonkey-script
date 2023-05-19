@@ -115,6 +115,7 @@
 // @match       *://weibo.com/cmbchina*
 // @match       *://weibo.com/u/*
 // @match       *://www.ctfiot.com/*
+// @match       *://www.takefoto.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -123,6 +124,11 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://www.takefoto.cn/*"],
+            hide: [".content .article .article-text .load"],
+            expand: [".content .article .article-text"],
+        },
         {
             match: ["*://www.ctfiot.com/*"],
             directLink: [
