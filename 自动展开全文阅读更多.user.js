@@ -119,6 +119,7 @@
 // @match       *://www.autohotkey.com/*
 // @match       *://www.95pm.com/*
 // @match       *://*.betheme.net/*
+// @match       *://*.zoukankan.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -127,6 +128,15 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.zoukankan.com/*"],
+            js: () => {
+                let nodeList = querySelectorIncludesText('a[href^="http"]', '查看全文');
+                if (nodeList.length > 0) {
+                    location.href = nodeList[0].href;
+                }
+            }
+        },
         {
             match: ["*://*.betheme.net/*"],
             hide: ["#vip"],
