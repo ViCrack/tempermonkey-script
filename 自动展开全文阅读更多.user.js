@@ -167,6 +167,7 @@
         {
             match: ["*://www.takefoto.cn/*"],
             hide: [".content .article .article-text .load"],
+            expand: [".article-text"]
         },
         {
             expand: [".content .article .article-text"],
