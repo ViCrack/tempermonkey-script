@@ -270,7 +270,7 @@
         {
             match: ["*://www.ngui.cc/*"],
             hide: ["#vip"],
-            expand: ["#contentWraper"],
+            expand: ["#contentWraper", ".article_content"],
         },
         {
             match: ["*://ddrv.cn/*"],
