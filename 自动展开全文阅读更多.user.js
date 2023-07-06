@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.108.0
+// @version     1.109.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -122,6 +122,7 @@
 // @match       *://*.zoukankan.com/*
 // @match       *://*.hexun.com/*
 // @match       *://*.xjx100.cn/*
+// @match       *://*.yii666.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -130,6 +131,19 @@
 
 (function () {
     var websites = [
+        {
+            // 抄袭站直接跳转到原文即可
+            match: ["*://*.yii666.com/*"],
+            hide: ["#vipReadAll", ".sidebar"],
+            expand: [".article-content-height"],
+            js: () => {
+                $('head').append('<meta name="referrer" content="never">');
+                let url = $('.OpenToUrl').attr('data-href');
+                if (url) {
+                    location.href = url;
+                }
+            }
+        },
         {
             match: ["*://*.xjx100.cn/*"],
             js: () => {
