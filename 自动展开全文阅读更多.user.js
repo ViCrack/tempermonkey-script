@@ -865,8 +865,8 @@
         },
         {
             match: ["*://www.elecfans.com/*", "*://m.elecfans.com/*"],
-            hide: [".seeHide_new_login", ".open_app.open_app_fixed", ".login-reg-fixed"],
-            expand: [".article_content", ".simditor .simditor-body"],
+            hide: [".seeHide_new_login", ".open_app.open_app_fixed", ".login-reg-fixed", ".seeHide"],
+            expand: [".article_content", ".simditor-body"],
         },
         {
             match: "*://www.bandbbs.cn/threads/*",
