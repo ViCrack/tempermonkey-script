@@ -93,7 +93,7 @@
 // @match       *://*.zol.com.cn/*
 // @match       *://www.5axxw.com/*
 // @match       *://3g.163.com/*
-// @match       *://code.js-code.com/*
+// @match       *://*.js-code.com/*
 // @match       *://*wenda.so.com/*
 // @match       *://*.dxy.cn/*
 // @match       *://*heidong.com/*
@@ -319,9 +319,9 @@
             expand: ["#det-content"],
         },
         {
-            match: ["*://code.js-code.com/*"],
+            match: ["*://*.js-code.com/*"],
             hide: ["#read-more-wrap"],
-            expand: ["#codeContent"],
+            expand: ["#codeContent", "#container"],
         },
         {
             match: ["*://*heidong.com/*"],
