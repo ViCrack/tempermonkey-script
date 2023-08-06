@@ -1035,7 +1035,7 @@
         {
             // 百度新闻, 百家号
             match: ["*://baijiahao.baidu.com/s*", "*://ext.baidu.com/api/comment/v1/page/list*", "*://mbd.baidu.com/newspage/*", "*://www.baidu.com/#iact=wiseindex/tabs/news/activity/newsdetail=*"],
-            hide: [".packupButton", ".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined", ".foldMaskWrapper"],
+            hide: [".packupButton", ".oPadding", ".newUnfoldFullBox.contentPadding", ".undefined", ".foldMaskWrapper", "#headDeflectorContainer"],
             expand: [".mainContent", "#mainContentContainer"],
             wait: [
                 ["p:contains('百度APP内阅读')", (node) => node.parentNode.parentNode.removeChild(node.parentNode)],
