@@ -10,7 +10,7 @@
 // @match       *://m.36kr.com/*
 // @match       *://ext.baidu.com/api/comment/*
 // @match       *://www.xz577.com/*
-// @match       *://m.huanqiu.com/*
+// @match       *://*.huanqiu.com/*
 // @match       *://iknow.lenovo.com.cn/*
 // @match       *://g.pconline.com.cn/*
 // @match       *://www.it1352.com/*
@@ -982,7 +982,12 @@
             expand: [".art-content"],
         },
         {
-            match: "*://m.huanqiu.com/*",
+            match: "*://3w.huanqiu.com/*",
+            hide: ["#more"],
+            expand: ["#content"],
+        },
+        {
+            match: ["*://m.huanqiu.com/*"],
             hide: [".unfold-btn"],
             expand: [".article-content", ".article .content"],
             start: () => {
