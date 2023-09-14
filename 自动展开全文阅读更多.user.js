@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.114.0
+// @version     1.115.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -128,6 +128,8 @@
 // @match       *://pythonjishu.com/*
 // @match       *://m.freebuf.com/*
 // @match       *://www.nuomiphp.com/*
+// @match       *://dhexx.cn/*
+// @match       *://*exyb.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -188,29 +190,34 @@
             }
         },
         {
-            match: ["*://*.xjx100.cn/*"],
+            match: ["*://*.xjx100.cn/*", "*://dhexx.cn/*"],
             js: () => {
                 $('head').append('<meta name="referrer" content="never">');
-                /*let text = $('.source_url').text();
-                let regex = /(https?:\/\/[^\s]+)/;
-                location.href = text.match(regex)[0];*/
-
-                var test = false;
-                var scriptTags = $("script");
-                scriptTags.each(function () {
-                    var src = $(this).attr("src");
-                    if (src && src.includes("?source_url=")) {
-                        let { source_url } = parseUrl(src);
-                        if (source_url) {
-                            test = true;
-                            location.href = source_url;
+                let text = $('.source_url').text();
+                if (text && (text.includes("http://") || text.includes("https://"))) {
+                    let regex = /(https?:\/\/[^\s]+)/;
+                    location.href = text.match(regex)[0];
+                } else {
+                    var test = false;
+                    var scriptTags = $("script");
+                    scriptTags.each(function () {
+                        var src = $(this).attr("src");
+                        if (src && src.includes("?source_url=")) {
+                            let { source_url } = parseUrl(src);
+                            if (source_url) {
+                                test = true;
+                                location.href = source_url;
+                            }
+                        }
+                    });
+                    if (!test) {
+                        let url = $('#vip').find('a').attr('href');
+                        if (url) {
+                            location.href = $('#vip').find('a').attr('href');
                         }
                     }
-                });
-                if (!test) {
-
-                    location.href = $('#vip').find('a').attr('href');
                 }
+
             }
 
         },
@@ -281,7 +288,7 @@
             expand: [".WB_editor_iframe_new"],
         },
         {
-            match: ["*://*.rstk.cn/*", "*://*.taodudu.cc/*", "*://*.dgrt.cn/*"],
+            match: ["*://*.rstk.cn/*", "*://*.taodudu.cc/*", "*://*.dgrt.cn/*", "*://*exyb.cn/*"],
             hide: ["div#vip"],
             expand: [".article_content"],
         },
