@@ -193,6 +193,21 @@
             match: ["*://*.xjx100.cn/*", "*://dhexx.cn/*"],
             js: () => {
                 $('head').append('<meta name="referrer" content="never">');
+
+                var originalTextMethod = $.fn.text;
+                $.fn.text = function (value) {
+                    if (arguments.length === 0) {
+                        return originalTextMethod.call(this);
+                    } else {
+                        let re = originalTextMethod.call(this, value);
+                        let text = $('.source_url').text();
+                        if (text && (text.includes("http://") || text.includes("https://"))) {
+                            let regex = /(https?:\/\/[^\s]+)/;
+                            location.href = text.match(regex)[0];
+                        }
+                        return re;
+                    }
+                };
                 let text = $('.source_url').text();
                 if (text && (text.includes("http://") || text.includes("https://"))) {
                     let regex = /(https?:\/\/[^\s]+)/;
