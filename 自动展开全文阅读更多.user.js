@@ -144,13 +144,12 @@
             match: ["*://theqoo.net/*"],
             js: () => {
                 var nowScroll = $(window).scrollTop();
-                console.log(nowScroll);
                 $(document).ajaxComplete(function (event, xhr, settings) {
                     if (settings && settings.data && settings.data.includes('act=dispBoardContentCommentListTheqoo')) {
+                        $(window).scrollTop(nowScroll);
                         if ($(".show_more:not([style='display: none;'])").length > 0) {
                             $(".show_more:not([style='display: none;'])").click();
                         }
-                        $(window).scrollTop(nowScroll);
                     }
                 });
             }
