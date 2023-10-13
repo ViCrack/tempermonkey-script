@@ -130,7 +130,7 @@
 // @match       *://m.freebuf.com/*
 // @match       *://www.nuomiphp.com/*
 // @match       *://dhexx.cn/*
-// @match       *://*exyb.cn/*
+// @match       *://*.exyb.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -318,7 +318,7 @@
             expand: [".WB_editor_iframe_new"],
         },
         {
-            match: ["*://*.rstk.cn/*", "*://*.taodudu.cc/*", "*://*.dgrt.cn/*", "*://*exyb.cn/*"],
+            match: ["*://*.rstk.cn/*", "*://*.taodudu.cc/*", "*://*.dgrt.cn/*", "*://*.exyb.cn/*"],
             hide: ["div#vip"],
             expand: [".article_content"],
         },
