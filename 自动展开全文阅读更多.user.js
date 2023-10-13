@@ -140,6 +140,7 @@
 (function () {
     var websites = [
         {
+            // https://theqoo.net/hot/2963319501
             match: ["*://theqoo.net/*"],
             js: () => {
                 jQuery(function () {
