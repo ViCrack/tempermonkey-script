@@ -2,6 +2,11 @@
 
 自己使用的一些用于网站优化的 tempermonkey 脚本
 
+安装地址
+
+[https://greasyfork.org/zh-CN/scripts/440400 自动展开全文阅读更多](https://greasyfork.org/zh-CN/scripts/440400)
+
+
 [https://greasyfork.org/zh-CN/users/306433](https://greasyfork.org/zh-CN/users/306433)
 
 ## 自动展开全文阅读更多
