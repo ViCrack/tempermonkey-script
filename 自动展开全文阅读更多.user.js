@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.122.0
+// @version     1.123.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -16,9 +16,7 @@
 // @match       *://g.pconline.com.cn/*
 // @match       *://www.it1352.com/*
 // @match       *://www.jianshu.com/p/*
-// @match       *://wenku.csdn.net/*
-// @match       *://blog.csdn.net/*
-// @match       *://download.csdn.net/download/*
+// @match       *://*.csdn.net/*
 // @match       *://jingyan.baidu.com/article/*
 // @match       *://baijiahao.baidu.com/s*
 // @match       *://haokan.baidu.com/v*
@@ -940,30 +938,39 @@
         {
             match: "*://blog.51cto.com/*",
             js: () => {
-                jQuery(function () {
-                    $(".copy_btn").removeClass("disable");
-                    $(".copy_btn").text("免登录复制");
-                    $("body")
-                        .off("click.copy_btn")
-                        .on("click", ".copy_btn", function (e) {
-                            e.stopPropagation();
-                            let $this = $(this);
-                            let text = $(this).parent(".hljs-cto").find("pre").find(".language-")[0].textContent;
-                            copy(text).then(
-                                () => {
-                                    $this.text("已复制");
-                                    setTimeout(function () {
-                                        $this.text("免登录复制");
-                                    }, 2000);
-                                },
-                                (e) => {
-                                    $this.text("复制失败:" + e);
-                                    setTimeout(function () {
-                                        $this.text("免登录复制");
-                                    }, 2000);
-                                }
-                            );
-                        });
+                safeWaitJQuery(() => {
+
+                    jQuery(function () {
+                        $(".copy_btn").removeClass("disable");
+                        $(".copy_btn").text("免登录复制");
+                        $(".article-content-wrap").unbind("copy");
+                        if ("undefined" == typeof unsafeWindow.uid || !unsafeWindow.uid) {
+                            unsafeWindow.uid = 1;
+                        }
+                        $("body")
+                            .off()
+                            .on("click", ".copy_btn", function (e) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                let $this = $(this);
+                                let text = $(this).parents(".hljs-cto").find("pre").find('[class*="language-"]')[0].textContent;
+                                copy(text).then(
+                                    () => {
+                                        $this.text("已复制");
+                                        setTimeout(function () {
+                                            $this.text("免登录复制");
+                                        }, 2000);
+                                    },
+                                    (e) => {
+                                        $this.text("复制失败:" + e);
+                                        setTimeout(function () {
+                                            $this.text("免登录复制");
+                                        }, 2000);
+                                    }
+                                );
+                                return false;
+                            });
+                    });
                 });
             },
         },
@@ -1163,6 +1170,12 @@
             expand: [".article-box .cont.first-show"],
         },
         {
+            // https://huaweicloud.csdn.net/657c0ecddafaf23eeaee29b9.html
+            match: ["*://huaweicloud.csdn.net/*"],
+            hide: [".article-detail .main-content .user-article-hide .article-show-more"],
+            expand: [".article-detail .main-content", ".article-detail .main-content .user-article-hide"],
+        },
+        {
             match: "*://blog.csdn.net/*",
             hide: [".weixin-shadowbox.wap-shadowbox", ".aside-header-fixed", ".hide-preCode-box", "#m_toolbar_left .m_toolbar_left_app_btn", ".readall_box", ".feed-Sign-span", ".btn_mod", ".btn_app_link", ".btn-readmore", ".comment_read_more_box", ".btn_open_app_prompt_div", ".feed-Sign-weixin"],
             expand: [".article_content", "#article_content", "#comment", ".set-code-hide"],
@@ -1317,15 +1330,6 @@
         }, 300);
     }
 
-    function copy(value) {
-        return new Promise((resolve, reject) => {
-            navigator.clipboard
-                ? navigator.clipboard.writeText(value).then(resolve, function () {
-                    nativeCopy(text).then(resolve, reject);
-                })
-                : nativeCopy(text).then(resolve, reject);
-        });
-    }
 
     function nativeCopy(value) {
         return new Promise((resolve, reject) => {
@@ -1348,6 +1352,16 @@
                 }, 1);
             }
             document.body.removeChild(textArea);
+        });
+    }
+
+    function copy(value) {
+        return new Promise((resolve, reject) => {
+            navigator.clipboard
+                ? navigator.clipboard.writeText(value).then(resolve, function () {
+                    nativeCopy(text).then(resolve, reject);
+                })
+                : nativeCopy(text).then(resolve, reject);
         });
     }
 
