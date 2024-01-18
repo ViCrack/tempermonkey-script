@@ -136,6 +136,8 @@
 // @match       *://txc.qq.com/*
 // @match       *://m.bjnews.com.cn/*
 // @match       *://www.cn-healthcare.com/*
+// @match       *://www.wevul.com/*
+// @match       *://*.yuque.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -144,6 +146,24 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.yuque.com/*"],
+            hide: ["div[class^=index-module_bottomAdvertiseWrapper]"],
+        },
+        {
+            match: ["*://www.wevul.com/*"],
+            directLink: [
+                "*/go/*",
+                (node) => {
+                    const regex = /\/go\/([^\/]+)$/;
+                    const base64Str = node.href.match(regex)[1];
+                    const decodedStr = atob(base64Str);
+                    node.href = decodedStr;
+                    node.setAttribute("target", "_blank");
+
+                },
+            ],
+        },
         {
             match: ["*://www.cn-healthcare.com/*"],
             hide: [".mask, .ni_mask", "footer"],
