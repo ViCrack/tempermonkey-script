@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.125.0
+// @version     1.129.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -139,6 +139,10 @@
 // @match       *://www.wevul.com/*
 // @match       *://*.yuque.com/*
 // @match       *://*.66law.cn/*
+// @match       *://*.ssap.com.cn/*
+// @match       *://*.chinaacc.com/*
+// @match       *://lvlin.baidu.com/*
+// @match       *://*.64365.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -147,6 +151,26 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.64365.com/*"],
+            hide: [".zs-unfold .unfd-btn-bar"],
+            expand: [".unfd-ovh"],
+        },
+        {
+            match: ["*://lvlin.baidu.com/*"],
+            hide: [".check-more.check-fold"],
+            expand: [".main-content-box"],
+        },
+        {
+            match: ["*://*.chinaacc.com/*"],
+            hide: [".news-con-mod .news-more-panel"],
+            expand: [".news-con-mod"],
+        },
+        {
+            match: ["*://*.ssap.com.cn/*"],
+            hide: [".yueduqi_over"],
+            expand: [".yueduqi_content"],
+        },
         {
             match: ["*://*.yuque.com/*"],
             hide: ["div[class^=index-module_bottomAdvertiseWrapper]"],
@@ -691,8 +715,8 @@
             // https://i.ifeng.com/c/8EJoQhvSkT3
             // https://ihouse.ifeng.com/news/2022_03_12-55263044_0.shtml
             match: "*://*.ifeng.com/*",
-            hide: ["section[class^='bottomSlide-']", "header[class^='headerIn-']", "div[class^='callupBtn-']", "div[class^='more-']", "div[class^='tip-']", "div.showall", "div[class^='more-1-']", "div[class^='bottom_box-'] > div[class^='box-']", "div[class^='containerBox-'] >  div[class^='shadow-']"],
-            expand: ["div[class^='main_content-']", "section.article", "div[class^='containerBox-']"],
+            hide: ["section[class^='bottomSlide-']", "header[class^='headerIn-']", "div[class^='callupBtn-']", "div[class^='more-']", "div[class^='tip-']", "div.showall", "div[class^='more-1-']", "div[class^='bottom_box-'] > div[class^='box-']", "div[class^='containerBox-'] >  div[class^='shadow-']", "[class^='index_shadow'] > [class^='index_unfoldIcon']"],
+            expand: ["div[class^='main_content-']", "section.article", "div[class^='containerBox-']", "div[class^='index_containerBox']"],
             css: "#root>div[class^='main-'] {margin-bottom: unset !important;}",
         },
         {
