@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.130.1
+// @version     1.131.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -144,6 +144,7 @@
 // @match       *://lvlin.baidu.com/*
 // @match       *://*.64365.com/*
 // @match       *://programmercarl.com/*
+// @match       *://*.qdxiaochuan.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -152,6 +153,11 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.qdxiaochuan.com/*"],
+            hide: [".teles, .telesmore"],
+            expand: [".postcon"],
+        },
         {
             match: ["*://programmercarl.com/*"],
             hide: ["#read-more-wrap"],
