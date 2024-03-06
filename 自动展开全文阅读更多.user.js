@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.132.0
+// @version     1.132.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -57,7 +57,8 @@
 // @match       *://www.423down.com/*
 // @match       *://www.itdaan.com/*
 // @match       *://www.iteye.com/blog/*
-// @match       *://www.360doc.com/content/*
+// @match       *://www.360doc.com/*
+// @match       *://www.360doc.cn/*
 // @match       *://developer.aliyun.com/*
 // @match       *://cloud.tencent.com/*
 // @match       *://mail.qq.com/*
@@ -779,9 +780,9 @@
         },
         {
             // http://www.360doc.com/content/20/0805/05/71057272_928578782.shtml
-            match: "*://www.360doc.com/content/*",
+            match: ["*://www.360doc.com/*", "*://www.360doc.cn/*"],
             hide: [".article_showall"],
-            expand: ["#articlecontent"],
+            expand: ["#articlecontent", ".article_maxh"],
             bindClick: [
                 "a[href^=http]",
                 (node, e) => {
