@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.132.1
+// @version     1.132.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持几十个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -1111,12 +1111,11 @@
             match: "*://zhidao.baidu.com/question/*",
             hide: [".w-detail-display-btn-text", ".wgt-best-mask", ".wgt-answers-mask", ".wgt-question-desc-action", ".w-reply-text .unfold", "div.wgt-target .target-text .wgt-target-mask"],
             expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]", "div[id^=answer-content-]", ".wgt-question-desc-inner", ".w-reply-text", "div.wgt-target .target-text", ".w-detail-container.w-detail-single"],
-            js: () => {
-                let e = document.getElementById("show-answer-hide");
-                if (e) {
-                    e.dispatchEvent(new Event("click"));
-                }
-            },
+            wait: [
+                ["#show-answer-hide", (node) => {
+                    node.dispatchEvent(new Event("click"));
+                }]
+            ],
         },
         {
             match: "*://haokan.baidu.com/v*",
