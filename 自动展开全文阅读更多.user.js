@@ -41,7 +41,7 @@
 // @match       *://zhuanlan.zhihu.com/p/*
 // @match       *://*.imooc.com/*
 // @match       *://*.py.cn/code/*
-// @match       *://finance.sina.com.cn/*
+// @match       *://*.sina.com.cn/*
 // @match       *://juejin.cn/post/*
 // @match       *://www.oschina.net/*
 // @match       *://iswbm.com/*
@@ -150,6 +150,7 @@
 // @match       *://*.volcengine.com/*
 // @match       *://*.289.com/*
 // @match       *://*.hi-linux.com/*
+// @match       *://*.chusan.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -158,6 +159,11 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.chusan.com/*"],
+            hide: [".view-more-btn", ".article-btns-open", "#cyh_banner"],
+            expand: ["div[id^='data']", ".xle.pop_.cn_"],
+        },
         {
             match: ["*://*.hi-linux.com/*"],
             hide: ["#read-more-wrap"],
@@ -522,9 +528,10 @@
             expand: [".topic"],
         },
         {
+            // https://wenda.so.com/q/1679797307210735
             match: ["*://*wenda.so.com/*"],
-            hide: ["#show-rest-entry"],
-            expand: ["#det-content"],
+            hide: ["#show-rest-entry", ".answer-part__has-folder__btn"],
+            expand: ["#det-content", ".answer-part__has-folder"],
         },
         {
             match: ["*://*.js-code.com/*"],
@@ -547,9 +554,13 @@
             },
         },
         {
+            // https://wap.zol.com.cn/ask/x_19257207.html
             match: ["*://*.zol.com.cn/*"],
-            hide: [".unfold-article-btn"],
+            hide: [".unfold-article-btn", ".wap__bottom-app-button"],
             expand: [".article-content"],
+            wait: [
+                ["div.show-all-reply", "click"]
+            ]
         },
         {
             match: ["*://3g.163.com/*"],
@@ -942,6 +953,12 @@
             hide: ["#sina-cont000", "#sina-pages-u"],
         },
         {
+            // https://iask.sina.com.cn/b/new2COrHbarDpB.html
+            match: "*://*.sina.com.cn/*",
+            hide: [".detail-text-more", "#floating-image"],
+            expand: [".new-pre-answer-text"],
+        },
+        {
             match: "*://*.py.cn/code/*",
             start: () => {
                 unsafeWindow.IsLevelDate = 1;
@@ -1263,6 +1280,12 @@
             match: ["*://huaweicloud.csdn.net/*"],
             hide: [".article-detail .main-content .user-article-hide .article-show-more"],
             expand: [".article-detail .main-content", ".article-detail .main-content .user-article-hide"],
+        },
+        {
+            // https://ask.csdn.net/questions/8082390/54571405
+            match: ["*://ask.csdn.net/*"],
+            hide: [".answer_container .expandBtn"],
+            expand: [".answer_container .ask-issue-content"],
         },
         {
             match: "*://blog.csdn.net/*",
