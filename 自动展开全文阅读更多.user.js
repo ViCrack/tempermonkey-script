@@ -161,6 +161,7 @@
 (function () {
     var websites = [
         {
+            // https://m.nowcoder.com/discuss/607623789546844160
             // https://greasyfork.org/zh-CN/scripts/440400-%E8%87%AA%E5%8A%A8%E5%B1%95%E5%BC%80%E5%85%A8%E6%96%87%E9%98%85%E8%AF%BB%E6%9B%B4%E5%A4%9A/discussions/239120
             match: ["*://*.nowcoder.com/*"],
             hide: [".view-more-btn", ".article-btns-open", "#cyh_banner"],
@@ -171,6 +172,18 @@
                 if (el) {
                     el.__vue__.$options.parent.isShowAll = true;
                 }
+
+                nodes = document.querySelectorAll(".wonder-item");
+                nodes.forEach(item => {
+                    item.__vue__.maxOneLineFontNum = 1000;
+                    item.__vue__.commentDisable = false;
+                });
+                $(".wonder-list").parent().parent()[0].__vue__.isShowAllList = true;
+
+                nodes = querySelectorIncludesText('span.text-content', 'APP内查看完整回复');
+                nodes.forEach(item => {
+                    item.remove();
+                });
             },
             start: () => {
                 var post = {};
