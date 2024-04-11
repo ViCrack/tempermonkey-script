@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.135.0
+// @version     1.135.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -178,6 +178,7 @@
             match: ["*://*.volcengine.com/*"],
             hide: ["div[class*='button-AVOE'][class*='volcfe-flex-middle']", "div[class^='cover-']"],
             expand: ["div[class^='content-'][class*='hidden-']"],
+            hookEvent: ["copy"],
         },
         {
             match: ["*://*.zjh336.cn/*"],
@@ -1507,6 +1508,12 @@
 
     const readyName = randomString(8, "abcdefghijklmnopqrstuvwxyz");
 
+    // https://greasyfork.org/zh-CN/scripts/28497
+    var EventTarget_addEventListener = EventTarget.prototype.addEventListener;
+    var document_addEventListener = document.addEventListener;
+    var Event_preventDefault = Event.prototype.preventDefault;
+
+
     for (var website of websites) {
         let hit = false;
         if (Array.isArray(website.match)) {
@@ -1674,6 +1681,39 @@
                 } else {
                     document.addEventListener("DOMContentLoaded", website.js);
                 }
+            }
+
+            if ('hookEvent' in website) {
+
+                function addEventListener(type, func, useCapture) {
+                    var _addEventListener = this === document ? document_addEventListener : EventTarget_addEventListener;
+                    if (typeof obj === 'function' && website.hookEvent(type, func, useCapture)) {
+                        return true
+                    } else if (website.hookEvent.includes(type)) {
+                        return true
+                    } else {
+                        _addEventListener.apply(this, arguments);
+                    }
+                }
+
+                EventTarget.prototype.addEventListener = addEventListener;
+                document.addEventListener = addEventListener;
+
+                var frames = document.querySelectorAll("frame")
+                if (frames) {
+                    for (let i = 0; i < frames.length; i++) {
+                        frames[i].contentWindow.document.addEventListener = addEventListener;
+                    }
+                }
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    var frames = document.querySelectorAll("frame")
+                    if (frames) {
+                        for (let i = 0; i < frames.length; i++) {
+                            frames[i].contentWindow.document.addEventListener = addEventListener;
+                        }
+                    }
+                });
             }
 
             break;
