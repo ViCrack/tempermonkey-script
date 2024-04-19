@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.136.1
+// @version     1.137.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -152,6 +152,7 @@
 // @match       *://*.hi-linux.com/*
 // @match       *://*.chusan.com/*
 // @match       *://*.nowcoder.com/*
+// @match       *://*.techgrow.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -160,6 +161,11 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.techgrow.cn/*"],
+            hide: ["#readmore-wrapper"],
+            expand: ["#readmore-container"],
+        },
         {
             // https://m.nowcoder.com/discuss/607623789546844160
             // https://greasyfork.org/zh-CN/scripts/440400-%E8%87%AA%E5%8A%A8%E5%B1%95%E5%BC%80%E5%85%A8%E6%96%87%E9%98%85%E8%AF%BB%E6%9B%B4%E5%A4%9A/discussions/239120
