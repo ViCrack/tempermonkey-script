@@ -69,7 +69,6 @@
 // @match       *://www.sanzhima.com/*
 // @match       *://m.meishichina.com/*
 // @match       *://www.logonews.cn/*
-// @match       *://cn.bing.com/search?*
 // @match       *://segmentfault.com/*
 // @match       *://ld246.com/*
 // @match       *://*.bilibili.com/*
@@ -775,18 +774,19 @@
                 },
             ],
         },
-        {
-            // https://cn.bing.com/search?form=MOZSBR&pc=MOZI&q=GIT_CLEAN_FLAGS
-            match: ["*://cn.bing.com/search?*"],
-            bindClick: [
-                "a[href^=http]",
-                (node, e) => {
-                    if (node.target == "_blank" && !node.hostname.includes("bing.com")) {
-                        e.stopPropagation();
-                    }
-                },
-            ],
-        },
+        // 暂时不用这功能
+        // {
+        //     // https://cn.bing.com/search?form=MOZSBR&pc=MOZI&q=GIT_CLEAN_FLAGS
+        //     match: ["*://cn.bing.com/search?*"],
+        //     bindClick: [
+        //         "a[href^=http]",
+        //         (node, e) => {
+        //             if (node.target == "_blank" && !node.hostname.includes("bing.com")) {
+        //                 e.stopPropagation();
+        //             }
+        //         },
+        //     ],
+        // },
         {
             match: ["*://www.logonews.cn/*"],
             directLink: ["*://link.logonews.cn/?url=*", "url"],
