@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.142.0
+// @version     1.143.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -160,6 +160,7 @@
 // @match       *://*.dazhong.com/*
 // @match       *://discussions*.apple.com/*
 // @match       *://www.msn.cn/*
+// @match       *://*.pcbaby.com.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -173,6 +174,8 @@
             wait: [
                 [".more-text", "click"],
                 [".dan-btn", "click"],
+                [".exercise-btn-4", "click"],
+                [".expand-btn", "click"],
             ]
         },
         {
@@ -203,6 +206,11 @@
                     return shadow;
                 };
             },
+        },
+        {
+            match: ["*://*.pcbaby.com.cn/*"],
+            hide: [".mip-showmore-btn"],
+            expand: ["mip-showmore"],
         },
         {
             match: ["*://discussions*.apple.com/*"],
@@ -825,6 +833,11 @@
             wait: [
                 ["div.to-see", "click"]
             ]
+        },
+        {
+            match: ["*://m.bilibili.com/*"],
+            hide: [".opus-read-more"],
+            expand: [".opus-module-content.limit"],
         },
         {
             match: ["*://ld246.com/*"],
