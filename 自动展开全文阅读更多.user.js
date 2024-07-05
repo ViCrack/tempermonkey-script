@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.144.0
+// @version     1.145.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -163,6 +163,7 @@
 // @match       *://www.msn.cn/*
 // @match       *://*.pcbaby.com.cn/*
 // @match       *://*.youzan.com/*
+// @match       *://*.93300.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -208,6 +209,11 @@
                     return shadow;
                 };
             },
+        },
+        {
+            match: ["*://*.93300.cn/*"],
+            hide: [".entry-readmore"],
+            expand: [".entry-content"],
         },
         {
             match: ["*://*.youzan.com/*"],
@@ -1419,8 +1425,8 @@
         },
         {
             // https://huaweicloud.csdn.net/657c0ecddafaf23eeaee29b9.html
-            match: ["*://huaweicloud.csdn.net/*"],
-            hide: [".article-detail .main-content .user-article-hide .article-show-more"],
+            match: ["*://huaweicloud.csdn.net/*", "*://openatomworkshop.csdn.net/*"],
+            hide: [".article-detail .main-content .user-article-hide .article-show-more", ".article-detail .user-desc-fix"],
             expand: [".article-detail .main-content", ".article-detail .main-content .user-article-hide"],
         },
         {
