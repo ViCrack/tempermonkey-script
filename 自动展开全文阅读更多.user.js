@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.145.0
+// @version     1.145.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -173,12 +173,31 @@
 (function () {
     var websites = [
         {
-            match: ["*://easylearn.baidu.com/*"],
+            match: ["*://easylearn.baidu.com/edu-page/tiangong/*"],
+            hide: [".bgk-detail .main-bottom", ".bgk-detail .banner", ".vip-banner-cont", ".vip-card-warp", ".business-el-line", ".question-cont .tigan .mask .toogle-btn"],
+            expand: [".question-cont .tigan"],
             wait: [
-                [".more-text", "click"],
-                [".dan-btn", "click"],
-                [".exercise-btn-4", "click"],
-                [".expand-btn", "click"],
+                [".more-text",
+                    node => {
+                        node.click();
+                        return false;
+                    },
+                ],
+                [".dan-btn",
+                    node => {
+                        node.click();
+                        return false;
+                    },],
+                [".exercise-btn-4",
+                    node => {
+                        node.click();
+                        return false;
+                    },],
+                [".expand-btn",
+                    node => {
+                        node.click();
+                        return false;
+                    },],
             ]
         },
         {
