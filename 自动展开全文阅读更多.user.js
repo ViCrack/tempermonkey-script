@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.152.3
+// @version     1.153.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -173,6 +173,7 @@
 // @match       *://*.ppmy.cn/*
 // @match       *://*.ultimate-communications.com/*
 // @match       *://*.zmtpc.com/*
+// @match       *://m.eeo.com.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -181,6 +182,23 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://m.eeo.com.cn/*"],
+            wait: [
+                [".a-load",
+                    node => {
+                        node.click();
+                        return false;
+                    },
+                ],
+                [".more",
+                    node => {
+                        node.click();
+                        return false;
+                    }
+                ],
+            ]
+        },
         {
             match: ["*://*.ultimate-communications.com/*"],
             hide: [".readall_box"],
@@ -744,8 +762,8 @@
         {
             // https://wenda.so.com/q/1679797307210735
             match: ["*://*wenda.so.com/*"],
-            hide: ["#show-rest-entry", ".answer-part__has-folder__btn", ".unfold-page.js-unfold-page"],
-            expand: ["#det-content", ".answer-part__has-folder"],
+            hide: ["#show-rest-entry", ".answer-part__has-folder__btn", ".unfold-page.js-unfold-page", "#js-unfold-more"],
+            expand: ["#det-content", ".answer-part__has-folder", "#js-ans-box-first"],
             wait: [[".hide.js-unfold-answer.answer-fold-box", (node) => node.classList.remove("hide")]],
         },
         {
@@ -1176,8 +1194,8 @@
         {
             // https://iask.sina.com.cn/b/new2COrHbarDpB.html
             match: "*://*.sina.com.cn/*",
-            hide: [".detail-text-more", "#floating-image", ".answer-mask-box"],
-            expand: [".new-pre-answer-text", ".knowledge-list-switch"],
+            hide: [".detail-text-more", "#floating-image", ".answer-mask-box", ".answer-show-button"],
+            expand: [".new-pre-answer-text", ".knowledge-list-switch", ".detail-body"],
         },
         {
             match: "*://*.py.cn/code/*",
