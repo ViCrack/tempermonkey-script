@@ -178,6 +178,7 @@
 // @match       *://*.sina.cn/*
 // @match       *://jpom.top/*
 // @match       *://*.xlxbk.cn/*
+// @match       *://*.dromara.org/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -192,9 +193,10 @@
             expand: ["[data-nav='posts']"],
         },
         {
-            match: ["*://jpom.top/*"],
+            match: ["*://jpom.top/*", "*://*.dromara.org/*"],
             js: () => {
                 unsafeWindow.localStorage.isStarJpomRepo = new Date().getTime();
+                unsafeWindow.localStorage.isStarRepo = new Date().getTime();
             },
         },
         {
