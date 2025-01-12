@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.155.0
+// @version     1.156.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -179,6 +179,8 @@
 // @match       *://jpom.top/*
 // @match       *://*.xlxbk.cn/*
 // @match       *://*.dromara.org/*
+// @match       *://*.dayi.org.cn/*
+// @match       *://*.goodreads.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -187,6 +189,25 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.goodreads.com/*"],
+            wait: [
+                [
+                    ".Button__labelItem:contains('Show more')",
+                    node => {
+                        let scrollPosition = window.scrollY || document.documentElement.scrollTop
+                        node.click();
+                        window.scrollTo(0, scrollPosition);
+                        return false;
+                    }
+                ]
+            ]
+        },
+        {
+            match: ["*://*.dayi.org.cn/*"],
+            hide: [".w-full.van-button--plain.van-button--info"],
+            expand: ["#tab-container"],
+        },
         {
             match: ["*://*.xlxbk.cn/*"],
             hide: [".read-more"],
@@ -938,8 +959,8 @@
         {
             // https://wukong.toutiao.com/question/6712757183118835972/
             match: ["*://*.toutiao.com/*"],
-            hide: ["a.j-expand-showfull.expand-bottom", ".m-share-answer .neck .mask", ".float-openapp", ".expand-container .expand-button-wrapper"],
-            expand: ["div.answer-text-full", "article.content", ".expand-container.folded"],
+            hide: ["a.j-expand-showfull.expand-bottom", ".m-share-answer .neck .mask", ".float-openapp", ".expand-container .expand-button-wrapper", ".wenda-answer-content .expand-button-wrapper"],
+            expand: ["div.answer-text-full", "article.content", ".expand-container.folded", ".wenda-answer-content"],
         },
         {
             match: ["*://www.bilibili.com/*"],
