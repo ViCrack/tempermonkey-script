@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.159.0
+// @version     1.159.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -1445,7 +1445,27 @@
             expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]", "div[id^=answer-content-]", ".wgt-question-desc-inner", ".w-reply-text", "div.wgt-target .target-text", ".w-detail-container.w-detail-single"],
             wait: [
                 ["#show-answer-hide", (node) => {
-                    node.dispatchEvent(new Event("click"));
+                    if (node.querySelector('span').style.display == 'none') {
+                        setTimeout(function () {
+                            node.dispatchEvent(new Event("click"));
+                            node.dispatchEvent(new Event("tap"));
+                            console.log('click');
+                        }, 1000);
+                    }
+                }],
+                [".fold-num-feed.show-more-replies", (node) => {
+                    setTimeout(function () {
+                        node.dispatchEvent(new Event('click', {
+                            bubbles: true, // 事件冒泡
+                            cancelable: false, // 事件是否可以取消
+                        }));
+                        node.dispatchEvent(new Event('tap', {
+                            bubbles: true, // 事件冒泡
+                            cancelable: false, // 事件是否可以取消
+                        }));
+
+                        console.log('click');
+                    }, 1000);
                 }]
             ],
         },
