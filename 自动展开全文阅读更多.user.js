@@ -1451,7 +1451,27 @@
             expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]", "div[id^=answer-content-]", ".wgt-question-desc-inner", ".w-reply-text", "div.wgt-target .target-text", ".w-detail-container.w-detail-single"],
             wait: [
                 ["#show-answer-hide", (node) => {
-                    node.dispatchEvent(new Event("click"));
+                    if (node.querySelector('span').style.display == 'none') {
+                        setTimeout(function () {
+                            node.dispatchEvent(new Event("click"));
+                            node.dispatchEvent(new Event("tap"));
+                            console.log('click');
+                        }, 1000);
+                    }
+                }],
+                [".fold-num-feed.show-more-replies", (node) => {
+                    setTimeout(function () {
+                        node.dispatchEvent(new Event('click', {
+                            bubbles: true, // 事件冒泡
+                            cancelable: false, // 事件是否可以取消
+                        }));
+                        node.dispatchEvent(new Event('tap', {
+                            bubbles: true, // 事件冒泡
+                            cancelable: false, // 事件是否可以取消
+                        }));
+
+                        console.log('click');
+                    }, 1000);
                 }]
             ],
         },
