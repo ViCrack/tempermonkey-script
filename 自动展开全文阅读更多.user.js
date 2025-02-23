@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.164.0
+// @version     1.164.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -234,28 +234,36 @@
         },
         {
             match: ["*://*.dongchedi.com/*"],
-            js: () => {
-                let node = document.querySelector("article[class*='index_article_']");
-                if (node) {
-                    node.parentNode.style.height = "auto";
-                    node.parentNode.style.overflow = "auto";
-                }
-                node = document.querySelector("div[style='width:84px;height:38px;background:#ffcc32']");
-                if (node) {
-                    if (node.innerText.includes('打开App')) {
-                        node.parentNode.parentNode.parentNode.remove();
+            wait: [
+                [
+                    "article[class*='index_article_']",
+                    node => {
+                        node.parentNode.style.height = "auto";
+                        node.parentNode.style.overflow = "auto";
                     }
-                }
-                node = document.querySelector("article > [class^='index_folder_']");
-                if (node) {
-                    node.remove();
-                }
-                let nodes = querySelectorIncludesText('.tw-w-full.tw-flex.tw-text-16.tw-items-center.tw-justify-center', '打开懂车帝APP，阅读完整内容');
-                nodes.forEach(item => {
-                    item.remove();
-                });
-
-            },
+                ],
+                [
+                    ".tw-text-color-gray-800.tw-text-10.tw-leading-14.tw-text-center:contains('4亿人用过')",
+                    node => {
+                        node.parentNode.parentNode.parentNode.parentNode.remove();
+                    }
+                ],
+                [
+                    "article > [class^='index_folder_']",
+                    node => {
+                        node.remove();
+                    }
+                ],
+                [
+                    ".tw-w-full.tw-flex.tw-text-16.tw-items-center.tw-justify-center:contains('打开懂车帝APP，阅读完整内容')",
+                    node => {
+                        node.remove();
+                    }
+                ]
+            ],
+            js: () => {
+                unsafeWindow.localStorage.setItem("_canUseWebp", 1);
+            }
         },
         {
             match: ["*://*.xilichi.com/*"],
@@ -1028,8 +1036,8 @@
         {
             // https://wukong.toutiao.com/question/6712757183118835972/
             match: ["*://*.toutiao.com/*"],
-            hide: ["a.j-expand-showfull.expand-bottom", ".m-share-answer .neck .mask", ".float-openapp", ".expand-container .expand-button-wrapper", ".wenda-answer-content .expand-button-wrapper", ".fold-outer-container .fold-button", ".fold-outer-container .fold-mask", ".arco-show-monitor .m-bottom-container"],
-            expand: ["div.answer-text-full", "article.content", ".expand-container.folded", ".wenda-answer-content", ".fold-outer-container .fold-container"],
+            hide: ["a.j-expand-showfull.expand-bottom", ".m-share-answer .neck .mask", ".float-openapp", ".expand-container .expand-button-wrapper", ".wenda-answer-content .expand-button-wrapper", ".fold-outer-container .fold-button", ".fold-outer-container .fold-mask", ".arco-show-monitor .m-bottom-container", ".fold-content > .arco-show-monitor", ".content.collapsed > .content-shadow", ".m-top-container.m-top-larger.m-top-no-search.news_article", ".m-top-padding"],
+            expand: ["div.answer-text-full", "article.content", ".expand-container.folded", ".wenda-answer-content", ".fold-outer-container .fold-container", ".content.collapsed"],
         },
         {
             match: ["*://www.bilibili.com/*"],
