@@ -187,6 +187,7 @@
 // @match       *://*.ghxi.com/*
 // @match       *://*.pixiv.net/*
 // @match       *://*.dongchedi.com/*
+// @match       *://*.autohome.com.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -267,6 +268,11 @@
             js: () => {
                 unsafeWindow.localStorage.setItem("_canUseWebp", 1);
             }
+        },
+        {
+            match: ["*://*.autohome.com.cn/*"],
+            hide: ["#continue_reading", "#oppen_applet"],
+            expand: ["#topicContentSection"],
         },
         {
             match: ["*://*.xilichi.com/*"],
