@@ -192,6 +192,7 @@
 // @match       *://*.eastmoney.com/*
 // @match       *://m.familydoctor.com.cn/*
 // @match       *://*.jiaochengzhijia.com/*
+// @match       *://www.t00ls.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -200,6 +201,10 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://www.t00ls.com/*"],
+            directLink: ["*://www.t00ls.com/link.html?url=*", "url"],
+        },
         {
             match: ["*://*.pixiv.net/*"],
             wait: [
