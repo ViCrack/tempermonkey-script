@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.172.0
+// @version     1.172.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -1172,11 +1172,10 @@
             expand: [".draft._Fc, .sound-intro .intro._Fc", ".stretch-box.ib_", ".album-intro .intro.Q_v"],
         },
         {
-            // https://auto.ifeng.com/c/8EK6RQbD5U2
             // https://i.ifeng.com/c/8EJoQhvSkT3
             // https://ihouse.ifeng.com/news/2022_03_12-55263044_0.shtml
             match: "*://*.ifeng.com/*",
-            hide: ["section[class^='bottomSlide-']", "header[class^='headerIn-']", "div[class^='callupBtn-']", "div[class^='more-']", "div[class^='tip-']", "div.showall", "div[class^='more-1-']", "div[class^='bottom_box-'] > div[class^='box-']", "div[class^='containerBox-'] >  div[class^='shadow-']", "[class^='index_shadow'] > [class^='index_unfoldIcon']", "div[class^='index_tip_']", "div[class^='index_more_I-']", "div[class^='index_link_']"],
+            hide: ["section[class^='bottomSlide-']", "header[class^='headerIn-']", "div[class^='callupBtn-']", "div[class^='more-']", "div[class^='tip-']", "div.showall", "div[class^='more-1-']", "div[class^='bottom_box-'] > div[class^='box-']", "div[class^='containerBox-'] >  div[class^='shadow-']", "[class^='index_shadow'] > [class^='index_unfoldIcon']", "section[class^='index_fixSlide_'] > div[class^='index_fixSlideBox_']"],
             expand: ["div[class^='main_content-']", "section.article", "div[class^='containerBox-']", "div[class^='index_containerBox']", "div[class^='index_main_content_']"],
             css: "#root>div[class^='main-'] {margin-bottom: unset !important;}",
         },
