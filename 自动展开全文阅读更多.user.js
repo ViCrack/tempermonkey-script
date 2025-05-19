@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.172.2
+// @version     1.172.3
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -1083,6 +1083,23 @@
             match: ["*://*.toutiao.com/*"],
             hide: ["a.j-expand-showfull.expand-bottom", ".m-share-answer .neck .mask", ".float-openapp", ".expand-container .expand-button-wrapper", ".wenda-answer-content .expand-button-wrapper", ".fold-outer-container .fold-button", ".fold-outer-container .fold-mask", ".arco-show-monitor .m-bottom-container", ".fold-content > .arco-show-monitor", ".content.collapsed > .content-shadow", ".m-top-container.m-top-larger.m-top-no-search.news_article", ".m-top-padding"],
             expand: ["div.answer-text-full", "article.content", ".expand-container.folded", ".wenda-answer-content", ".fold-outer-container .fold-container", ".content.collapsed"],
+            hookEvent: (type, func, useCapture) => {
+                if (type == "click") {
+                    console.log(this);
+                    console.log("hookEvent", type, func, useCapture);
+                }
+                return false;
+            },
+            js: () => {
+                let node = document.querySelector(".content.collapsed");
+                if (node != null) {
+                    node.onclick = function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                    }
+                }
+            }
         },
         {
             match: ["*://www.bilibili.com/*"],
@@ -2122,12 +2139,12 @@
 
                 function addEventListener(type, func, useCapture) {
                     var _addEventListener = this === document ? document_addEventListener : EventTarget_addEventListener;
-                    if (typeof obj === 'function' && website.hookEvent(type, func, useCapture)) {
+                    if (typeof website.hookEvent === 'function' && website.hookEvent.call(this, type, func, useCapture)) {
                         return true
-                    } else if (website.hookEvent.includes(type)) {
+                    } else if (Array.isArray(website.hookEvent) && website.hookEvent.includes(type)) {
                         return true
                     } else {
-                        _addEventListener.apply(this, arguments);
+                        return _addEventListener.apply(this, arguments);
                     }
                 }
 
