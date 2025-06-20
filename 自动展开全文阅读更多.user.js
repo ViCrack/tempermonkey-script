@@ -43,7 +43,7 @@
 // @match       *://*.imooc.com/*
 // @match       *://*.py.cn/code/*
 // @match       *://*.sina.com.cn/*
-// @match       *://juejin.cn/post/*
+// @match       *://juejin.cn/*
 // @match       *://www.oschina.net/*
 // @match       *://iswbm.com/*
 // @match       *://m.so.com/s?q=*
@@ -1381,7 +1381,7 @@
             directLink: ["*://www.oschina.net/action/GoToLink?url=*", "url"],
         },
         {
-            match: "*://juejin.cn/post/*",
+            match: "*://juejin.cn/*",
             directLink: ["*link.juejin.cn/?target=*", "target"],
             hide: [".top-banners-container > .global-top-banner"],
             css: `
