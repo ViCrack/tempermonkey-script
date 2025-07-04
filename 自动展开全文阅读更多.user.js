@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.174.1
+// @version     1.174.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -220,18 +220,34 @@
         },
         {
             match: ["*://*.ghxi.com/*"],
-            js: () => {
-                if (unsafeWindow.wpopt.module_site_notice_hash) {
-                    unsafeWindow.localStorage.setItem("wpopt_dialog_hash", unsafeWindow.wpopt.module_site_notice_hash);
-                    const e = new Date
-                        , t = e.getFullYear()
-                        , n = String(e.getMonth() + 1).padStart(2, "0")
-                        , r = String(e.getDate()).padStart(2, "0");
-                    let d = `${t}${n}${r}`;
-                    unsafeWindow.localStorage.setItem("wpopt_dialog_open_time", d);
-                    unsafeWindow.localStorage.setItem("wpopt_dialog_open", "true");
-                }
+            start: () => {
+                let wpopt = unsafeWindow.wpopt;
+                Object.defineProperty(unsafeWindow, "wpopt", {
+                    get: function () {
+                        return wpopt;
+                    },
+                    set: function (value) {
+                        wpopt = value;
+                        if (wpopt && wpopt.module_site_notice_hash) {
+                            unsafeWindow.localStorage.setItem("wpopt_dialog_hash", wpopt.module_site_notice_hash);
+                        }
+                    },
+                    enumerable: true,
+                    configurable: false,
+                });
+                const e = new Date
+                    , t = e.getFullYear()
+                    , n = String(e.getMonth() + 1).padStart(2, "0")
+                    , r = String(e.getDate()).padStart(2, "0");
+                let d = `${t}${n}${r}`;
+                unsafeWindow.localStorage.setItem("wpopt_dialog_open_time", d);
+                unsafeWindow.localStorage.setItem("wpopt_dialog_open", "true");
             },
+            css: () => {
+                return `
+                .wpcom_ad_wrap { position: absolute !important; left: -3000px !important; }
+                `;
+            }
         },
         {
             match: ["*://*.goodreads.com/*"],
