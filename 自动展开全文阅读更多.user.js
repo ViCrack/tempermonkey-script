@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.174.3
+// @version     1.174.4
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -38,7 +38,7 @@
 // @match       *://mbd.baidu.com/newspage/*
 // @match       *://ailegal.baidu.com/*
 // @match       *://www.cnbeta.com/articles/*
-// @match       *://www.zhihu.com/question/*
+// @match       *://www.zhihu.com/*
 // @match       *://zhuanlan.zhihu.com/p/*
 // @match       *://*.imooc.com/*
 // @match       *://*.py.cn/code/*
@@ -1457,7 +1457,7 @@
             directLink: ["*link.zhihu.com/?target=*", "target"],
         },
         {
-            match: "*://www.zhihu.com/question/*",
+            match: "*://www.zhihu.com/*",
             hide: [".OpenInAppButton", ".openInApp", ".DownloadGuide", ".Pc-feedAd-container", ".MobileAppHeader-downloadLink", ".ContentItem-expandButton", ".AdBelowMoreAnswers", ".MBannerAd"],
             expand: [".RichContent-inner--collapsed", ".RichContent-inner"],
             wait: [
