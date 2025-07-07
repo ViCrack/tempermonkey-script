@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.174.2
+// @version     1.174.3
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -1468,6 +1468,21 @@
                         node.classList.remove("is-collapsed");
                     },
                 ],
+                [
+                    "div[class^='css-']:equals('是否在知乎 App 内阅读全文')", (node) => {
+                        // node的同级下一个元素
+                        let nextNode = node.nextElementSibling;
+                        if (nextNode) {
+                            // 从里面找一个button，text内容是“取消”，点击
+                            const buttons = nextNode.querySelectorAll('button');
+                            const cancelButton = Array.from(buttons).find(el => el.textContent.trim() === '取消');
+                            if (cancelButton) {
+                                cancelButton.click();
+                                return true;
+                            }
+                        }
+                    }
+                ]
             ],
             directLink: ["*link.zhihu.com/?target=*", "target"],
             css: `
@@ -1482,6 +1497,13 @@
                     margin-bottom: 40px !important;
                 }
             `,
+            js: () => {
+                setTimeout(() => {
+                    querySelectorEqualsText("button[class*='Button--primary']", "打开App").forEach(item => {
+                        item.parentNode.parentNode.remove();
+                    });
+                }, 1000);
+            },
         },
         {
             match: "*://www.cnbeta.com/articles/*",
@@ -1975,6 +1997,9 @@
     function querySelectorIncludesText(selector, text) {
         return Array.from(document.querySelectorAll(selector)).filter((el) => el.textContent.includes(text));
     }
+    function querySelectorEqualsText(selector, text) {
+        return Array.from(document.querySelectorAll(selector)).filter((el) => el.textContent.trim() === text);
+    }
 
     // https://github.com/Shawak/TwitchSquad/blob/main/twitchsquad.user.js
     if (typeof GM_addStyle === "undefined") {
@@ -2069,7 +2094,12 @@
                                 if (m) {
                                     nodeList = querySelectorIncludesText(m[1], m[2]);
                                 } else {
-                                    nodeList = document.querySelectorAll(w[0]);
+                                    m = w[0].match(/(.+?):equals\(\s*['"](.+?)['"]\s*\)/);
+                                    if (m) {
+                                        nodeList = querySelectorEqualsText(m[1], m[2]);
+                                    } else {
+                                        nodeList = document.querySelectorAll(w[0]);
+                                    }
                                 }
                                 let allNodeFinish = nodeList.length > 0;
                                 nodeList.forEach((node) => {
