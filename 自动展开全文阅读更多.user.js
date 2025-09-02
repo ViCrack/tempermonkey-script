@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.174.6
+// @version     1.175.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -195,6 +195,7 @@
 // @match       *://www.t00ls.com/*
 // @match       *://xiaolincoding.com/*
 // @match       *://*.dangbei.com/*
+// @match       *://forum.butian.net/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -203,6 +204,29 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://forum.butian.net/*"],
+            js: () => {
+                $('body').off('click', 'a');
+                $('body').on('click', 'a', function (e) {
+                    if (!this || !this.href) {
+                        return;
+                    }
+                    try {
+                        var url = new URL(this.href);
+                        var host = url.host;
+                        if (!host.includes('.butian.net')) {
+                            window.open(this.href, "_blank");
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                        }
+                    } catch (error) {
+                        return;
+                    }
+                })
+            },
+        },
         {
             match: ["*://www.t00ls.com/*"],
             directLink: ["*://www.t00ls.com/link.html?url=*", "url"],
