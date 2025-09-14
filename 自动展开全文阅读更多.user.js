@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.175.1
+// @version     1.175.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -235,10 +235,13 @@
             match: ["*://*.pixiv.net/*"],
             wait: [
                 [
-                    "div:contains('浏览更多')", "click"
+                    "button:contains('浏览更多')", 'keepclick'
                 ],
                 [
-                    "div[class^='sc-']:contains('查看全部')", "click"
+                    "div[class^='sc-']:contains('阅读作品')", 'click'
+                ],
+                [
+                    "div[class^='sc-']:contains('查看全部')", 'keepclick'
                 ]
             ]
         },
@@ -2130,11 +2133,11 @@
 
             if ("wait" in website) {
                 // TODO 需要换种方式优化
-                let ready = [];
+                let ready = new Set();
                 let id = setInterval(() => {
                     try {
                         for (let w of website.wait) {
-                            if (!(w[0] in ready)) {
+                            if (!ready.has(w[0])) {
                                 let nodeList;
                                 let m = w[0].match(/(.+?):contains\(\s*['"](.+?)['"]\s*\)/);
                                 if (m) {
@@ -2154,6 +2157,12 @@
                                             node.dispatchEvent(new Event("click"));
                                             node.dispatchEvent(new Event("tap"));
                                             node.click();
+                                        } else if (w[1] === "keepclick") {
+                                            node.dispatchEvent(new Event("click"));
+                                            node.dispatchEvent(new Event("tap"));
+                                            node.click();
+                                            allNodeFinish = false;
+                                            return
                                         } else {
                                             let callret = w[1].call(node, node); // 返回值
                                             if (callret === false) {
@@ -2165,14 +2174,15 @@
                                     }
                                 });
                                 if (allNodeFinish) {
-                                    ready.push(w[0]);
+                                    ready.add(w[0]);
                                 }
                             }
                         }
-                        if (ready.length == website.wait.length) {
+                        if (ready.size == website.wait.length) {
                             clearInterval(id);
                         }
                     } catch (x) {
+                        console.log(x);
                         clearInterval(id);
                     }
                 }, 1000);
