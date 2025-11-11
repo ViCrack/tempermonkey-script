@@ -195,6 +195,7 @@
 // @match       *://www.t00ls.com/*
 // @match       *://xiaolincoding.com/*
 // @match       *://*.dangbei.com/*
+// @match       *://*.xinhuaxmt.com/*
 // @match       *://forum.butian.net/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
@@ -204,6 +205,11 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.xinhuaxmt.com/*"],
+            hide: [".content-more-btn", ".link-app > #myfoot", ".banner-container"],
+            expand: [".main-text-container.fold-content"],
+        },
         {
             match: ["*://forum.butian.net/*"],
             js: () => {
