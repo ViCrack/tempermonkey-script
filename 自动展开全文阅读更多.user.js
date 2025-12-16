@@ -198,6 +198,7 @@
 // @match       *://*.xinhuaxmt.com/*
 // @match       *://forum.butian.net/*
 // @match       *://*.zaobao.com/*
+// @match       *://*.kdocs.cn/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -206,6 +207,12 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://*.kdocs.cn/*"],
+            js: () => {
+                unsafeWindow.localStorage.setItem("skip_domain_security_check", "true");
+            },
+        },
         {
             // https://www.zaobao.com/realtime/china/story20251202-7906402
             match: ["*://*.zaobao.com/*"],
