@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.177.1
+// @version     1.178.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -199,6 +199,7 @@
 // @match       *://forum.butian.net/*
 // @match       *://*.zaobao.com/*
 // @match       *://*.kdocs.cn/*
+// @match       *://m.hexun.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -207,6 +208,11 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://m.hexun.com/*"],
+            hide: [".article-open", "#download-app", "#info-banner"],
+            expand: [".article"],
+        },
         {
             match: ["*://*.kdocs.cn/*"],
             js: () => {
@@ -227,15 +233,15 @@
         {
             match: ["*://forum.butian.net/*"],
             js: () => {
-                $('body').off('click', 'a');
-                $('body').on('click', 'a', function (e) {
+                $("body").off("click", "a");
+                $("body").on("click", "a", function (e) {
                     if (!this || !this.href) {
                         return;
                     }
                     try {
                         var url = new URL(this.href);
                         var host = url.host;
-                        if (!host.includes('.butian.net')) {
+                        if (!host.includes(".butian.net")) {
                             window.open(this.href, "_blank");
                             e.preventDefault();
                             e.stopPropagation();
@@ -244,7 +250,7 @@
                     } catch (error) {
                         return;
                     }
-                })
+                });
             },
         },
         {
@@ -254,16 +260,10 @@
         {
             match: ["*://*.pixiv.net/*"],
             wait: [
-                [
-                    "button:equals('浏览更多')", 'keepclick'
-                ],
-                [
-                    "div[class^='sc-']:equals('阅读作品')", 'click'
-                ],
-                [
-                    "div[class^='sc-']:equals('查看全部')", 'keepclick'
-                ]
-            ]
+                ["button:equals('浏览更多')", "keepclick"],
+                ["div[class^='sc-']:equals('阅读作品')", "click"],
+                ["div[class^='sc-']:equals('查看全部')", "keepclick"],
+            ],
         },
         {
             match: ["*://*.ghxi.com/*"],
@@ -282,10 +282,10 @@
                     enumerable: true,
                     configurable: false,
                 });
-                const e = new Date
-                    , t = e.getFullYear()
-                    , n = String(e.getMonth() + 1).padStart(2, "0")
-                    , r = String(e.getDate()).padStart(2, "0");
+                const e = new Date(),
+                    t = e.getFullYear(),
+                    n = String(e.getMonth() + 1).padStart(2, "0"),
+                    r = String(e.getDate()).padStart(2, "0");
                 let d = `${t}${n}${r}`;
                 unsafeWindow.localStorage.setItem("wpopt_dialog_open_time", d);
                 unsafeWindow.localStorage.setItem("wpopt_dialog_open", "true");
@@ -294,64 +294,64 @@
                 return `
                 .wpcom_ad_wrap { position: absolute !important; left: -3000px !important; }
                 `;
-            }
+            },
         },
         {
             match: ["*://*.goodreads.com/*"],
             wait: [
                 [
                     ".Button__labelItem:contains('Show more')",
-                    node => {
-                        let scrollPosition = window.scrollY || document.documentElement.scrollTop
+                    (node) => {
+                        let scrollPosition = window.scrollY || document.documentElement.scrollTop;
                         node.click();
                         window.scrollTo(0, scrollPosition);
                         return false;
-                    }
-                ]
-            ]
+                    },
+                ],
+            ],
         },
         {
             match: ["*://*.dongchedi.com/*"],
             wait: [
                 [
                     "article[class*='index_article_']",
-                    node => {
+                    (node) => {
                         node.parentNode.style.height = "auto";
                         node.parentNode.style.overflow = "auto";
-                    }
+                    },
                 ],
                 [
                     ".tw-text-color-gray-800.tw-text-10.tw-leading-14.tw-text-center:contains('4亿人用过')",
-                    node => {
+                    (node) => {
                         node.parentNode.parentNode.parentNode.parentNode.remove();
-                    }
+                    },
                 ],
                 [
                     "article > [class^='index_folder_']",
-                    node => {
+                    (node) => {
                         node.remove();
-                    }
+                    },
                 ],
                 [
                     ".tw-w-full.tw-flex.tw-text-16.tw-items-center.tw-justify-center:contains('打开懂车帝APP，阅读完整内容')",
-                    node => {
+                    (node) => {
                         node.remove();
-                    }
-                ]
+                    },
+                ],
             ],
             js: () => {
                 unsafeWindow.localStorage.setItem("_canUseWebp", 1);
-            }
+            },
         },
         {
             match: ["*://*.dangbei.com/*"],
             wait: [
                 [
                     "span:contains('手机客户端下载')",
-                    node => {
+                    (node) => {
                         node.parentNode.parentNode.remove();
-                    }
-                ]
+                    },
+                ],
             ],
         },
         {
@@ -418,46 +418,47 @@
         },
         {
             match: ["*://*.sina.cn/*"],
-            hide: [
-                ".read-unfold-box",
-                "#article_end + div",
-                "#m-sentiment3",
-                ".m-guss-caijing.js-guss-caijing.animated.pluse",
-                ".broadcast.js-voice.show",
-                ".broadcast.js-voice.shou",
-            ],
+            hide: [".read-unfold-box", "#article_end + div", "#m-sentiment3", ".m-guss-caijing.js-guss-caijing.animated.pluse", ".broadcast.js-voice.show", ".broadcast.js-voice.shou"],
             expand: [".main-article-body"],
             wait: [
-                [".snp-container", node => {
-                    if (node.parentNode) {
-                        node.parentNode.remove();
-                    }
-                    return false;
-                }],
-                [".wap-msg-bar", node => {
-                    if (node.parentNode) {
-                        node.parentNode.remove();
-                    }
-                    return false;
-                }]
-            ]
+                [
+                    ".snp-container",
+                    (node) => {
+                        if (node.parentNode) {
+                            node.parentNode.remove();
+                        }
+                        return false;
+                    },
+                ],
+                [
+                    ".wap-msg-bar",
+                    (node) => {
+                        if (node.parentNode) {
+                            node.parentNode.remove();
+                        }
+                        return false;
+                    },
+                ],
+            ],
         },
         {
             match: ["*://m.eeo.com.cn/*"],
             wait: [
-                [".a-load",
-                    node => {
+                [
+                    ".a-load",
+                    (node) => {
                         node.click();
                         return false;
                     },
                 ],
-                [".more",
-                    node => {
+                [
+                    ".more",
+                    (node) => {
                         node.click();
                         return false;
-                    }
+                    },
                 ],
-            ]
+            ],
         },
         {
             match: ["*://*.ultimate-communications.com/*"],
@@ -504,28 +505,35 @@
             hide: [".bgk-detail .main-bottom", ".bgk-detail .banner", ".vip-banner-cont", ".vip-card-warp", ".business-el-line", ".question-cont .tigan .mask .toogle-btn"],
             expand: [".question-cont .tigan"],
             wait: [
-                [".more-text",
-                    node => {
+                [
+                    ".more-text",
+                    (node) => {
                         node.click();
                         return false;
                     },
                 ],
-                [".dan-btn",
-                    node => {
+                [
+                    ".dan-btn",
+                    (node) => {
                         node.click();
                         return false;
-                    },],
-                [".exercise-btn-4",
-                    node => {
+                    },
+                ],
+                [
+                    ".exercise-btn-4",
+                    (node) => {
                         node.click();
                         return false;
-                    },],
-                [".expand-btn",
-                    node => {
+                    },
+                ],
+                [
+                    ".expand-btn",
+                    (node) => {
                         node.click();
                         return false;
-                    },],
-            ]
+                    },
+                ],
+            ],
         },
         {
             match: ["*://www.msn.cn/*"],
@@ -625,14 +633,14 @@
                 }
 
                 nodes = document.querySelectorAll(".wonder-item");
-                nodes.forEach(item => {
+                nodes.forEach((item) => {
                     item.__vue__.maxOneLineFontNum = 1000;
                     item.__vue__.commentDisable = false;
                 });
                 $(".wonder-list").parent().parent()[0].__vue__.isShowAllList = true;
 
-                nodes = querySelectorIncludesText('span.text-content', 'APP内查看完整回复');
-                nodes.forEach(item => {
+                nodes = querySelectorIncludesText("span.text-content", "APP内查看完整回复");
+                nodes.forEach((item) => {
                     item.remove();
                 });
             },
@@ -722,7 +730,6 @@
                     const decodedStr = atob(base64Str);
                     node.href = decodedStr;
                     node.setAttribute("target", "_blank");
-
                 },
             ],
         },
@@ -766,22 +773,22 @@
             js: () => {
                 var nowScroll = $(window).scrollTop();
                 $(document).ajaxComplete(function (event, xhr, settings) {
-                    if (settings && settings.data && (settings.data.includes('act=dispBoardContentCommentListTheqoo') || settings.data.includes('act=dispTheqooContentCommentListTheqoo'))) {
+                    if (settings && settings.data && (settings.data.includes("act=dispBoardContentCommentListTheqoo") || settings.data.includes("act=dispTheqooContentCommentListTheqoo"))) {
                         $(window).scrollTop(nowScroll);
                         if ($(".show_more:not([style='display: none;'])").length > 0) {
                             $(".show_more:not([style='display: none;'])").click();
                         }
                     }
                 });
-            }
+            },
         },
         {
             match: ["*://m.freebuf.com/*"],
             js: () => {
                 if (window.innerWidth > 1024) {
-                    location.href = location.href.replace('m.freebuf.com', 'www.freebuf.com');
+                    location.href = location.href.replace("m.freebuf.com", "www.freebuf.com");
                 }
-            }
+            },
         },
         {
             match: ["*://www.nuomiphp.com/*"],
@@ -798,20 +805,24 @@
             hide: ["#read-more"],
             expand: [".art-txt"],
             js: () => {
-                document.oncontextmenu = function () { return true; };
-                document.onkeydown = function () { return true; };
-            }
+                document.oncontextmenu = function () {
+                    return true;
+                };
+                document.onkeydown = function () {
+                    return true;
+                };
+            },
         },
         {
             // 抄袭站直接跳转到原文即可
             match: ["*://*.pianshen.com/*"],
             js: () => {
-                $('head').append('<meta name="referrer" content="never">');
-                let url = $('#gotosource a').attr('href');
+                $("head").append('<meta name="referrer" content="never">');
+                let url = $("#gotosource a").attr("href");
                 if (url) {
                     location.href = url;
                 }
-            }
+            },
         },
         {
             // 抄袭站直接跳转到原文即可
@@ -819,24 +830,24 @@
             hide: ["#vipReadAll", ".sidebar"],
             expand: [".article-content-height"],
             js: () => {
-                $('head').append('<meta name="referrer" content="never">');
-                let url = $('.OpenToUrl').attr('data-href');
+                $("head").append('<meta name="referrer" content="never">');
+                let url = $(".OpenToUrl").attr("data-href");
                 if (url) {
                     location.href = url;
                 }
-            }
+            },
         },
         {
             match: ["*://*.xjx100.cn/*", "*://dhexx.cn/*", "*://*.ppmy.cn/*"],
             js: () => {
-                $('head').append('<meta name="referrer" content="never">');
+                $("head").append('<meta name="referrer" content="never">');
                 var originalTextMethod = $.fn.text;
                 $.fn.text = function (value) {
                     if (arguments.length === 0) {
                         return originalTextMethod.call(this);
                     } else {
                         let re = originalTextMethod.call(this, value);
-                        let text = $('.source_url').text();
+                        let text = $(".source_url").text();
                         if (text && (text.includes("http://") || text.includes("https://"))) {
                             let regex = /(https?:\/\/[^\s]+)/;
                             location.href = text.match(regex)[0];
@@ -844,7 +855,7 @@
                         return re;
                     }
                 };
-                let text = $('.source_url').text();
+                let text = $(".source_url").text();
                 if (text && (text.includes("http://") || text.includes("https://"))) {
                     let regex = /(https?:\/\/[^\s]+)/;
                     location.href = text.match(regex)[0];
@@ -862,25 +873,23 @@
                         }
                     });
                     if (!test) {
-                        let url = $('#vip').find('a').attr('href');
+                        let url = $("#vip").find("a").attr("href");
                         if (url) {
-                            location.href = $('#vip').find('a').attr('href');
+                            location.href = $("#vip").find("a").attr("href");
                         }
                     }
                 }
-
-            }
-
+            },
         },
         {
             match: ["*://*.zoukankan.com/*"],
             js: () => {
-                $('head').append('<meta name="referrer" content="never">');
-                let nodeList = querySelectorIncludesText('a[href^="http"]', '查看全文');
+                $("head").append('<meta name="referrer" content="never">');
+                let nodeList = querySelectorIncludesText('a[href^="http"]', "查看全文");
                 if (nodeList.length > 0) {
                     location.href = nodeList[0].href;
                 }
-            }
+            },
         },
         {
             match: ["*://*.hexun.com/*"],
@@ -900,14 +909,14 @@
         {
             match: ["*://www.takefoto.cn/*"],
             hide: [".content .article .article-text .load"],
-            expand: [".article-text"]
+            expand: [".article-text"],
         },
         {
             expand: [".content .article .article-text"],
             match: ["*://www.autohotkey.com/*"],
             js: () => {
-                const items = document.querySelectorAll('.codebox > p > a:first-child + :nth-child(2)');
-                items.forEach(item => {
+                const items = document.querySelectorAll(".codebox > p > a:first-child + :nth-child(2)");
+                items.forEach((item) => {
                     expandCode(item);
                 });
             },
@@ -931,12 +940,12 @@
             wait: [
                 [
                     "span.expand",
-                    node => {
+                    (node) => {
                         node.click();
                         return false;
-                    }
-                ]
-            ]
+                    },
+                ],
+            ],
         },
         {
             // https://weibo.com/ttarticle/p/show?id=2309404890441668493647
@@ -1058,9 +1067,7 @@
             match: ["*://*.zol.com.cn/*"],
             hide: [".unfold-article-btn", ".wap__bottom-app-button"],
             expand: [".article-content"],
-            wait: [
-                ["div.show-all-reply", "click"]
-            ]
+            wait: [["div.show-all-reply", "click"]],
         },
         {
             match: ["*://3g.163.com/*"],
@@ -1152,8 +1159,8 @@
                 }
             `,
             js: () => {
-                $('#artLookAll').click();
-            }
+                $("#artLookAll").click();
+            },
         },
         {
             match: "*://m.downxia.com/*",
@@ -1186,9 +1193,7 @@
                 }
                 return false;
             },
-            wait: [
-                [".text:contains('即将离开，打开\"今日头条\"')", (node) => node.parentNode.parentNode.querySelector(".cancel").click()],
-            ],
+            wait: [[".text:contains('即将离开，打开\"今日头条\"')", (node) => node.parentNode.parentNode.querySelector(".cancel").click()]],
             js: () => {
                 let node = document.querySelector(".content.collapsed");
                 if (node != null) {
@@ -1196,9 +1201,9 @@
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
-                    }
+                    };
                 }
-            }
+            },
         },
         {
             match: ["*://www.bilibili.com/*"],
@@ -1220,9 +1225,7 @@
         {
             match: ["*://m.bilibili.com/video/*"],
             hide: [".launch-app-btn.m-nav-openapp"],
-            wait: [
-                ["div.to-see", "click"]
-            ]
+            wait: [["div.to-see", "click"]],
         },
         {
             match: ["*://m.bilibili.com/*"],
@@ -1309,10 +1312,7 @@
                 },
             ],
             start: () => {
-                if (
-                    location.hostname === "tieba.baidu.com" &&
-                    location.pathname === "/mo/q/checkurl"
-                ) {
+                if (location.hostname === "tieba.baidu.com" && location.pathname === "/mo/q/checkurl") {
                     const params = new URLSearchParams(location.search);
                     const url = params.get("url");
                     if (url) {
@@ -1485,7 +1485,7 @@
                 .header-with-banner {
                     top: 0px !important;
                 }
-            `
+            `,
         },
         {
             match: "*://www.3h3.com/soft/*",
@@ -1550,20 +1550,21 @@
                     },
                 ],
                 [
-                    "div[class^='css-']:equals('是否在知乎 App 内阅读全文')", (node) => {
+                    "div[class^='css-']:equals('是否在知乎 App 内阅读全文')",
+                    (node) => {
                         // node的同级下一个元素
                         let nextNode = node.nextElementSibling;
                         if (nextNode) {
                             // 从里面找一个button，text内容是“取消”，点击
-                            const buttons = nextNode.querySelectorAll('button');
-                            const cancelButton = Array.from(buttons).find(el => el.textContent.trim() === '取消');
+                            const buttons = nextNode.querySelectorAll("button");
+                            const cancelButton = Array.from(buttons).find((el) => el.textContent.trim() === "取消");
                             if (cancelButton) {
                                 cancelButton.click();
                                 return true;
                             }
                         }
-                    }
-                ]
+                    },
+                ],
             ],
             directLink: ["*link.zhihu.com/?target=*", "target"],
             css: `
@@ -1580,7 +1581,7 @@
             `,
             js: () => {
                 setTimeout(() => {
-                    querySelectorEqualsText("button[class*='Button--primary']", "打开App").forEach(item => {
+                    querySelectorEqualsText("button[class*='Button--primary']", "打开App").forEach((item) => {
                         item.parentNode.parentNode.remove();
                     });
                 }, 1000);
@@ -1610,7 +1611,6 @@
             match: "*://blog.51cto.com/*",
             js: () => {
                 safeWaitJQuery(() => {
-
                     jQuery(function () {
                         $(".copy_btn").removeClass("disable");
                         $(".copy_btn").text("免登录复制");
@@ -1711,29 +1711,39 @@
             hide: [".w-detail-display-btn-text", ".wgt-best-mask", ".wgt-answers-mask", ".wgt-question-desc-action", ".w-reply-text .unfold", "div.wgt-target .target-text .wgt-target-mask"],
             expand: [".w-detail-container.w-detail-index", "div[id^=best-content-]", "div[id^=answer-content-]", ".wgt-question-desc-inner", ".w-reply-text", "div.wgt-target .target-text", ".w-detail-container.w-detail-single"],
             wait: [
-                ["#show-answer-hide", (node) => {
-                    if (node.querySelector('span').style.display == 'none') {
+                [
+                    "#show-answer-hide",
+                    (node) => {
+                        if (node.querySelector("span").style.display == "none") {
+                            setTimeout(function () {
+                                node.dispatchEvent(new Event("click"));
+                                node.dispatchEvent(new Event("tap"));
+                                console.log("click");
+                            }, 1000);
+                        }
+                    },
+                ],
+                [
+                    ".fold-num-feed.show-more-replies",
+                    (node) => {
                         setTimeout(function () {
-                            node.dispatchEvent(new Event("click"));
-                            node.dispatchEvent(new Event("tap"));
-                            console.log('click');
-                        }, 1000);
-                    }
-                }],
-                [".fold-num-feed.show-more-replies", (node) => {
-                    setTimeout(function () {
-                        node.dispatchEvent(new Event('click', {
-                            bubbles: true, // 事件冒泡
-                            cancelable: false, // 事件是否可以取消
-                        }));
-                        node.dispatchEvent(new Event('tap', {
-                            bubbles: true, // 事件冒泡
-                            cancelable: false, // 事件是否可以取消
-                        }));
+                            node.dispatchEvent(
+                                new Event("click", {
+                                    bubbles: true, // 事件冒泡
+                                    cancelable: false, // 事件是否可以取消
+                                })
+                            );
+                            node.dispatchEvent(
+                                new Event("tap", {
+                                    bubbles: true, // 事件冒泡
+                                    cancelable: false, // 事件是否可以取消
+                                })
+                            );
 
-                        console.log('click');
-                    }, 1000);
-                }]
+                            console.log("click");
+                        }, 1000);
+                    },
+                ],
             ],
         },
         {
@@ -1830,7 +1840,7 @@
             directLink: ["*://link.jianshu.com/?t=*", "t", "*://links.jianshu.com/go?to=*", "to"],
             js: () => {
                 sessionStorage.setItem("showGuidance", 1);
-                let node = document.querySelector('.download-app-guidance');
+                let node = document.querySelector(".download-app-guidance");
                 if (node) {
                     node.__vue__.closeGuidance();
                 }
@@ -1851,9 +1861,9 @@
             js: () => {
                 let btn = $(".more-wrap").find(".el-button");
                 btn.removeAttr("data-report-click");
-                btn.click()
+                btn.click();
                 $("#desc-text").prop("checked", true);
-            }
+            },
         },
         {
             match: ["*://gitcode.csdn.net/*"],
@@ -1877,8 +1887,8 @@
             hide: [".expandBtn"],
             expand: [".ask-issue-content"],
             js: () => {
-                $('.answer-more').click();
-            }
+                $(".answer-more").click();
+            },
         },
         {
             match: "*://*blog.csdn.net/*",
@@ -1928,7 +1938,7 @@
                                 jQuery("code").attr("onclick", "mdcp.copyCode(event)");
                                 try {
                                     unsafeWindow.csdn.copyright.init("", "", "");
-                                } catch (err) { }
+                                } catch (err) {}
                                 try {
                                     Object.defineProperty(unsafeWindow.csdn.report, "reportClick", {
                                         value: function () {
@@ -1937,14 +1947,14 @@
                                         writable: false,
                                         configurable: false,
                                     });
-                                } catch (err) { }
+                                } catch (err) {}
                                 try {
                                     Object.defineProperty(unsafeWindow, "articleType", {
                                         value: 0,
                                         writable: false,
                                         configurable: false,
                                     });
-                                } catch (err) { }
+                                } catch (err) {}
                             }
                         });
                     });
