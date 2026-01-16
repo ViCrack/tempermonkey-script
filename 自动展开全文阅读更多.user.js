@@ -217,8 +217,7 @@
                         this.href &&
                         (this.classList.contains('normal-external-link-icon') ||
                             this.classList.contains('danger-external-link-icon') ||
-                            this.classList.contains('risky-external-link-icon') ||
-                            this.classList.contains('blocked-links'))) {
+                            this.classList.contains('risky-external-link-icon'))) {
 
                         this.setAttribute("target", "_blank");
                         return true;
