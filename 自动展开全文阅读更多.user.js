@@ -951,7 +951,7 @@
         },
         {
             // https://weibo.com/cmbchina
-            match: ["*://weibo.com/", "*://weibo.com/cmbchina*", "*://weibo.com/u/*"],
+            match: ["*://weibo.com/*"],
             wait: [
                 [
                     "span.expand",
