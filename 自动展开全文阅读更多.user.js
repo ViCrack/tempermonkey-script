@@ -956,9 +956,16 @@
                 [
                     "span.expand:contains('展开')",
                     (node) => {
+                        // 检查是否已经处理过
+                        if (node.getAttribute('data-expanded-processed')) {
+                            return false;
+                        }
+                        // 添加标记
+                        node.setAttribute('data-expanded-processed', 'true');
+
                         setTimeout(() => {
                             node.click();
-                        }, 2000);
+                        }, 1000);
                         return false;
                     },
                 ],
