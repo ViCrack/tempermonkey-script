@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.179.3
+// @version     1.179.4
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -950,33 +950,43 @@
             ],
         },
         {
-            // https://weibo.com/cmbchina
+            // https://weibo.com/cmbchina — 仅展开视口内可见的长文，滚动时再展开新进入视口的，避免批量展开导致页面高度突变和点击评论/点赞时的坐标抖动
             match: ["*://weibo.com/*"],
-            wait: [
-                [
-                    "span.expand:contains('展开')",
-                    (node) => {
-                        // 检查是否已经处理过
-                        if (node.getAttribute('data-expanded-processed')) {
-                            return false;
-                        }
-                        // 添加标记
-                        node.setAttribute('data-expanded-processed', 'true');
+            js: () => {
+                const expanded = new WeakSet();
 
-                        setTimeout(() => {
-                            node.click();
-                        }, 1000);
-                        return false;
-                    },
-                ],
-                [
-                    "span.collapse:contains('收起')",
-                    (node) => {
-                        node.remove();
-                        return false;
-                    },
-                ],
-            ],
+                function removeCollapse() {
+                    document.querySelectorAll("span.collapse").forEach((el) => {
+                        if (el.textContent == "收起") el.remove();
+                    });
+                }
+
+                function expandVisible() {
+                    removeCollapse();
+                    document.querySelectorAll('.expand').forEach(el => {
+                        if (expanded.has(el) || el.textContent != '展开') return;
+                        const { top, bottom } = el.getBoundingClientRect();
+                        if (top >= 0 && bottom <= window.innerHeight) {
+                            expanded.add(el);
+                            el.click();
+                        }
+                    });
+                }
+
+                // 两者共用同一个函数，逻辑不重复
+                let ticking = false;
+                const throttled = () => {
+                    if (!ticking) {
+                        requestAnimationFrame(() => { expandVisible(); ticking = false; });
+                        ticking = true;
+                    }
+                };
+
+                window.addEventListener('scroll', throttled);
+                new MutationObserver(throttled).observe(document.body, { childList: true, subtree: true });
+
+                expandVisible();
+            },
         },
         {
             // https://weibo.com/ttarticle/p/show?id=2309404890441668493647
