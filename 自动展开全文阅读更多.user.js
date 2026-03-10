@@ -209,7 +209,7 @@
     var websites = [
         {
             match: ["*://*.gitcode.com/*"],
-            hide: [".blog-content-detail-mask"],
+            hide: [".blog-content-detail-mask", ".login-tip"],
             expand: [".blog-content-detail"],
         },
         {
