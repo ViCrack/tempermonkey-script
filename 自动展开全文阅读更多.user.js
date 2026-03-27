@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.181.0
+// @version     1.181.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -227,12 +227,7 @@
             match: ["*://linux.do/*"],
             hookEvent: function (type, func, useCapture) {
                 if (type == "click" || type == "auxclick" || type == "contextmenu") {
-                    if (this.tagName === 'A' &&
-                        this.href &&
-                        (this.classList.contains('normal-external-link-icon') ||
-                            this.classList.contains('danger-external-link-icon') ||
-                            this.classList.contains('risky-external-link-icon'))) {
-
+                    if (this.tagName === "A" && this.href && (this.classList.contains("normal-external-link-icon") || this.classList.contains("danger-external-link-icon") || this.classList.contains("risky-external-link-icon"))) {
                         this.setAttribute("target", "_blank");
                         return true;
                     }
@@ -980,8 +975,8 @@
 
                 function expandVisible() {
                     removeCollapse();
-                    document.querySelectorAll('.expand').forEach(el => {
-                        if (expanded.has(el) || el.textContent != '展开') return;
+                    document.querySelectorAll(".expand").forEach((el) => {
+                        if (expanded.has(el) || el.textContent != "展开") return;
                         const { top, bottom } = el.getBoundingClientRect();
                         if (top >= 0 && bottom <= window.innerHeight) {
                             expanded.add(el);
@@ -994,12 +989,15 @@
                 let ticking = false;
                 const throttled = () => {
                     if (!ticking) {
-                        requestAnimationFrame(() => { expandVisible(); ticking = false; });
+                        requestAnimationFrame(() => {
+                            expandVisible();
+                            ticking = false;
+                        });
                         ticking = true;
                     }
                 };
 
-                window.addEventListener('scroll', throttled);
+                window.addEventListener("scroll", throttled);
                 new MutationObserver(throttled).observe(document.body, { childList: true, subtree: true });
 
                 expandVisible();
@@ -1695,7 +1693,7 @@
                                         setTimeout(function () {
                                             $this.text("免登录复制");
                                         }, 2000);
-                                    }
+                                    },
                                 );
                                 return false;
                             });
@@ -1789,13 +1787,13 @@
                                 new Event("click", {
                                     bubbles: true, // 事件冒泡
                                     cancelable: false, // 事件是否可以取消
-                                })
+                                }),
                             );
                             node.dispatchEvent(
                                 new Event("tap", {
                                     bubbles: true, // 事件冒泡
                                     cancelable: false, // 事件是否可以取消
-                                })
+                                }),
                             );
 
                             console.log("click");
@@ -1924,7 +1922,7 @@
             },
         },
         {
-            match: ["*://gitcode.csdn.net/*"],
+            match: ["*://*.csdn.net/*"],
             hide: [".article-show-more", ".article-detail .user-desc-fix", ".content-ai"],
             expand: [".article-detail .main-content .user-article-hide"],
         },
@@ -1996,7 +1994,7 @@
                                 jQuery("code").attr("onclick", "mdcp.copyCode(event)");
                                 try {
                                     unsafeWindow.csdn.copyright.init("", "", "");
-                                } catch (err) { }
+                                } catch (err) {}
                                 try {
                                     Object.defineProperty(unsafeWindow.csdn.report, "reportClick", {
                                         value: function () {
@@ -2005,14 +2003,14 @@
                                         writable: false,
                                         configurable: false,
                                     });
-                                } catch (err) { }
+                                } catch (err) {}
                                 try {
                                     Object.defineProperty(unsafeWindow, "articleType", {
                                         value: 0,
                                         writable: false,
                                         configurable: false,
                                     });
-                                } catch (err) { }
+                                } catch (err) {}
                             }
                         });
                     });
