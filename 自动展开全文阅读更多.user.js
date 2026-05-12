@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.182.0
+// @version     1.182.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -227,15 +227,19 @@
         {
             match: ["*://zxki.cn/*"],
             start: () => {
-                document.addEventListener('click', function (e) {
-                    const downloadBtn = e.target.closest('.download_item_btn');
-                    if (downloadBtn) {
-                        e.stopImmediatePropagation();
-                        downloadBtn.setAttribute("target", "_blank");
-                        downloadBtn.setAttribute("rel", "noreferrer");
-                        // window.open(downloadBtn.getAttribute('href'), '_blank', 'noreferrer');
-                    }
-                }, true);
+                document.addEventListener(
+                    "click",
+                    function (e) {
+                        const downloadBtn = e.target.closest(".download_item_btn");
+                        if (downloadBtn) {
+                            e.stopImmediatePropagation();
+                            downloadBtn.setAttribute("target", "_blank");
+                            downloadBtn.setAttribute("rel", "noreferrer");
+                            // window.open(downloadBtn.getAttribute('href'), '_blank', 'noreferrer');
+                        }
+                    },
+                    true,
+                );
             },
         },
         {
@@ -248,6 +252,99 @@
                     }
                 }
                 return false;
+            },
+            js: () => {
+                // 增强支持linux.do话题贴通过新标签页方式打开后增加阅读量
+                var pathMatch = location.pathname.match(/^\/t\/topic\/(\d+)/);
+                var delayMs = Math.floor(Math.random() * 2500) + 300;
+                setTimeout(function () {
+                    var meta = document.head.querySelector("meta[name=csrf-token]");
+                    var csrfToken = meta && meta.content;
+                    if (!csrfToken) return;
+
+                    function buildTrackHeaders(tid) {
+                        return {
+                            accept: "application/json, text/javascript, */*; q=0.01",
+                            "x-csrf-token": csrfToken,
+                            "x-requested-with": "XMLHttpRequest",
+                            "discourse-logged-in": "true",
+                            "discourse-present": "true",
+                            "discourse-track-view": "true",
+                            "discourse-track-view-topic-id": String(tid),
+                        };
+                    }
+
+                    if (pathMatch) {
+                        var topicId = pathMatch[1];
+                        function trackVisitTopic(isRetry) {
+                            var fetchOpts = {
+                                method: "GET",
+                                headers: buildTrackHeaders(topicId),
+                                credentials: "include",
+                            };
+                            fetch("/t/" + topicId + ".json?track_visit=true&forceLoad=true", fetchOpts).then(function (response) {
+                                if (response.status === 429 && !isRetry) {
+                                    var retryDelayMs = (Math.floor(Math.random() * 16) + 10) * 1000;
+                                    setTimeout(function () {
+                                        trackVisitTopic(true);
+                                    }, retryDelayMs);
+                                    return;
+                                }
+                                if (response.ok) {
+                                    console.log("[linux.do] track_visit ok, topicId=" + topicId);
+                                }
+                            });
+                        }
+                        trackVisitTopic(false);
+                        return;
+                    }
+
+                    var listRoot = document.querySelector("tbody.topic-list-body, .topic-list-body");
+                    if (!listRoot) return;
+
+                    var rows = listRoot.querySelectorAll("tr[data-topic-id]");
+                    var listIds = [];
+                    var seenId = {};
+                    var maxNewTopics = 10;
+                    for (var ri = 0; ri < rows.length; ri++) {
+                        var tr = rows[ri];
+                        if (!tr.querySelector("a.badge-notification.new-topic")) continue;
+                        var lid = tr.getAttribute("data-topic-id");
+                        if (!lid || seenId[lid]) continue;
+                        seenId[lid] = true;
+                        listIds.push(lid);
+                        if (listIds.length >= maxNewTopics) break;
+                    }
+                    if (!listIds.length) return;
+
+                    function stepDelay() {
+                        return Math.floor(Math.random() * 3500) + 1400;
+                    }
+
+                    function runList(index) {
+                        if (index >= listIds.length) {
+                            console.log("[linux.do] track_visit list done, count=" + listIds.length);
+                            return;
+                        }
+                        var tid = listIds[index];
+                        var fetchOpts = {
+                            method: "GET",
+                            headers: buildTrackHeaders(tid),
+                            credentials: "include",
+                        };
+                        fetch("/t/" + tid + ".json?track_visit=true&forceLoad=true", fetchOpts).then(function (response) {
+                            if (!response.ok) {
+                                console.warn("[linux.do] track_visit list aborted, topicId=" + tid + ", status=" + response.status);
+                                return;
+                            }
+                            console.log("[linux.do] track_visit list ok [" + (index + 1) + "/" + listIds.length + "] topicId=" + tid);
+                            setTimeout(function () {
+                                runList(index + 1);
+                            }, stepDelay());
+                        });
+                    }
+                    runList(0);
+                }, delayMs);
             },
         },
         {
@@ -2009,7 +2106,7 @@
                                 jQuery("code").attr("onclick", "mdcp.copyCode(event)");
                                 try {
                                     unsafeWindow.csdn.copyright.init("", "", "");
-                                } catch (err) { }
+                                } catch (err) {}
                                 try {
                                     Object.defineProperty(unsafeWindow.csdn.report, "reportClick", {
                                         value: function () {
@@ -2018,14 +2115,14 @@
                                         writable: false,
                                         configurable: false,
                                     });
-                                } catch (err) { }
+                                } catch (err) {}
                                 try {
                                     Object.defineProperty(unsafeWindow, "articleType", {
                                         value: 0,
                                         writable: false,
                                         configurable: false,
                                     });
-                                } catch (err) { }
+                                } catch (err) {}
                             }
                         });
                     });
@@ -2121,7 +2218,6 @@
         }, 300);
     }
 
-
     function nativeCopy(value) {
         return new Promise((resolve, reject) => {
             let textArea = document.createElement("textarea");
@@ -2150,8 +2246,8 @@
         return new Promise((resolve, reject) => {
             navigator.clipboard
                 ? navigator.clipboard.writeText(value).then(resolve, function () {
-                    nativeCopy(text).then(resolve, reject);
-                })
+                      nativeCopy(text).then(resolve, reject);
+                  })
                 : nativeCopy(text).then(resolve, reject);
         });
     }
@@ -2185,10 +2281,10 @@
     const readyName = randomString(8, "abcdefghijklmnopqrstuvwxyz");
 
     // https://greasyfork.org/zh-CN/scripts/28497
-    var EventTarget_addEventListener = EventTarget.prototype.addEventListener;
-    var document_addEventListener = document.addEventListener;
+    // 必须用 unsafeWindow 才能真正 hook 页面的 EventTarget，否则只是改了沙箱内的副本
+    var EventTarget_addEventListener = unsafeWindow.EventTarget.prototype.addEventListener;
+    var document_addEventListener = unsafeWindow.document.addEventListener;
     var Event_preventDefault = Event.prototype.preventDefault;
-
 
     for (var website of websites) {
         let hit = false;
@@ -2275,7 +2371,7 @@
                                             node.dispatchEvent(new Event("tap"));
                                             node.click();
                                             allNodeFinish = false;
-                                            return
+                                            return;
                                         } else {
                                             let callret = w[1].call(node, node); // 返回值
                                             if (callret === false) {
@@ -2338,7 +2434,7 @@
                             }
                         }
                     },
-                    true
+                    true,
                 );
             }
 
@@ -2353,7 +2449,7 @@
                             d[1].call(target, target, e);
                         }
                     },
-                    true
+                    true,
                 );
             }
 
@@ -2371,34 +2467,34 @@
                 }
             }
 
-            if ('hookEvent' in website) {
-
-                function addEventListener(type, func, useCapture) {
-                    var _addEventListener = this === document ? document_addEventListener : EventTarget_addEventListener;
-                    if (typeof website.hookEvent === 'function' && website.hookEvent.call(this, type, func, useCapture)) {
-                        return true
+            if ("hookEvent" in website) {
+                unsafeWindow.EventTarget.prototype.addEventListener = function addEventListener(type, func, useCapture) {
+                    if (typeof website.hookEvent === "function" && website.hookEvent.call(this, type, func, useCapture)) {
+                        return true;
                     } else if (Array.isArray(website.hookEvent) && website.hookEvent.includes(type)) {
-                        return true
+                        return true;
                     } else {
-                        return _addEventListener.apply(this, arguments);
+                        return EventTarget_addEventListener.apply(this, arguments);
                     }
-                }
+                };
 
-                EventTarget.prototype.addEventListener = addEventListener;
-                document.addEventListener = addEventListener;
-
-                var frames = document.querySelectorAll("frame")
+                // frame 内的 contentWindow 是独立的 browsing context，需单独处理
+                var frames = document.querySelectorAll("frame");
                 if (frames) {
                     for (let i = 0; i < frames.length; i++) {
-                        frames[i].contentWindow.document.addEventListener = addEventListener;
+                        try {
+                            frames[i].contentWindow.EventTarget.prototype.addEventListener = unsafeWindow.EventTarget.prototype.addEventListener;
+                        } catch (e) {}
                     }
                 }
 
-                document.addEventListener("DOMContentLoaded", function () {
-                    var frames = document.querySelectorAll("frame")
+                document_addEventListener.call(document, "DOMContentLoaded", function () {
+                    var frames = document.querySelectorAll("frame");
                     if (frames) {
                         for (let i = 0; i < frames.length; i++) {
-                            frames[i].contentWindow.document.addEventListener = addEventListener;
+                            try {
+                                frames[i].contentWindow.EventTarget.prototype.addEventListener = unsafeWindow.EventTarget.prototype.addEventListener;
+                            } catch (e) {}
                         }
                     }
                 });
