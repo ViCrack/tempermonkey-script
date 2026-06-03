@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.182.1
+// @version     1.182.2
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -197,6 +197,7 @@
 // @match       *://*.zaobao.com/*
 // @match       *://*.kdocs.cn/*
 // @match       *://m.hexun.com/*
+// @match       *://claude.ai/*
 // @match       *://linux.do/*
 // @match       *://*.gitcode.com/*
 // @match       *://security.feishu.cn/*
@@ -209,6 +210,26 @@
 
 (function () {
     var websites = [
+        {
+            match: ["*://claude.ai/*"],
+            bindClick: [
+                "a[href^=http]",
+                (node, e) => {
+                    try {
+                        const h = new URL(node.href).hostname.toLowerCase();
+                        if (h === "claude.ai" || h.endsWith(".claude.ai")) return;
+                    } catch (_) {
+                        return;
+                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    node.target = "_blank";
+                    node.rel = "noopener noreferrer";
+                    window.open(node.href, "_blank", "noopener,noreferrer");
+                },
+            ],
+        },
         {
             match: ["*://security.feishu.cn/*"],
             start: () => {
