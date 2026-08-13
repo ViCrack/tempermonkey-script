@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.183.0
+// @version     1.184.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -1427,9 +1427,15 @@
             },
         },
         {
-            match: ["*://www.bilibili.com/*"],
-            hide: [".h5-download-bar", ".read-article-box .read-more .arrow-cnt", ".video-desc-container .toggle-btn"],
-            expand: [".read-article-box.limit", ".video-desc-container .basic-desc-info"],
+            // https://space.bilibili.com/24490535/dynamic — 动态长文「展开」为 CSS 截断，全文已在 DOM
+            match: ["*://www.bilibili.com/*", "*://space.bilibili.com/*", "*://t.bilibili.com/*"],
+            hide: [".h5-download-bar", ".read-article-box .read-more .arrow-cnt", ".video-desc-container .toggle-btn", ".bili-rich-text__action"],
+            expand: [".read-article-box.limit", ".video-desc-container .basic-desc-info", ".bili-rich-text__content.folded"],
+            css: `
+                .bili-rich-text__content.folded {
+                    display: block !important;
+                }
+            `,
             js: () => {
                 // 去掉复制的时候总是带上的尾巴
                 let node = document.getElementById("article-content");
