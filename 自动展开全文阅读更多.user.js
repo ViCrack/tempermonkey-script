@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.184.0
+// @version     1.184.1
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -203,6 +203,7 @@
 // @match       *://security.feishu.cn/*
 // @match       *://zxki.cn/*
 // @match       *://www.xlshc.com/*
+// @match       *://xiaolinnote.com/*
 // @grant       GM_addStyle
 // @grant       GM_openInTab
 // @grant       unsafeWindow
@@ -271,6 +272,11 @@
                     if (observed) clearInterval(timer);
                 }, 500);
             },
+        },
+        {
+            match: ["*://xiaolinnote.com/*"],
+            hide: ["#readmore-wrapper"],
+            expand: ["#markdown-content"],
         },
         {
             match: ["*://*.gitcode.com/*"],
