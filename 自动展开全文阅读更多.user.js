@@ -276,7 +276,7 @@
         {
             match: ["*://xiaolinnote.com/*"],
             hide: ["#readmore-wrapper"],
-            expand: ["#markdown-content"],
+            expand: ["#markdown-content", "#readmore-container"],
         },
         {
             match: ["*://*.gitcode.com/*"],
