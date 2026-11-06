@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        自动展开全文阅读更多
-// @version     1.184.1
+// @version     1.185.0
 // @author      baster
 // @description 自动展开网站全文内容而无需点击，去掉一些烦人广告，去掉需要打开app的提示，站外链直达(支持鼠标左右键和拖拽打开)，避免网址重定向浪费时间，支持免登陆复制文字，兼容手机和电脑端。 -- 【目前已支持上百个网站】
 // @supportURL  https://greasyfork.org/zh-CN/users/306433
@@ -819,28 +819,36 @@
         },
         {
             // https://m.nowcoder.com/discuss/607623789546844160
+            // https://m.nowcoder.com/feed/main/detail/a0515140b2a9477f8e103736c2835c11
             // https://greasyfork.org/zh-CN/scripts/440400-%E8%87%AA%E5%8A%A8%E5%B1%95%E5%BC%80%E5%85%A8%E6%96%87%E9%98%85%E8%AF%BB%E6%9B%B4%E5%A4%9A/discussions/239120
             match: ["*://*.nowcoder.com/*"],
-            hide: [".view-more-btn", ".article-btns-open", "#cyh_banner"],
-            expand: ["div[id^='data']", ".xle.pop_.cn_"],
+            hide: [".view-more-btn", ".article-btns-open", "#cyh_banner", ".more-btn-mask", ".feed-top-app-box", ".feed-app-bottom-go", ".go-app-show-all", ".ncmain-app-btn", ".ncnav .ext > a"],
+            expand: ["div[id^='data']", ".xle.pop_.cn_", ".post-content-wrap"],
             js: () => {
-                $(".continue-btn").click();
-                let el = document.querySelector(".ncmain.appwithsplit");
-                if (el) {
-                    el.__vue__.$options.parent.isShowAll = true;
-                }
+                try {
+                    if (typeof $ === "function") {
+                        $(".continue-btn").click();
+                    }
+                    let el = document.querySelector(".ncmain.appwithsplit");
+                    if (el && el.__vue__ && el.__vue__.$options.parent) {
+                        el.__vue__.$options.parent.isShowAll = true;
+                    }
 
-                nodes = document.querySelectorAll(".wonder-item");
-                nodes.forEach((item) => {
-                    item.__vue__.maxOneLineFontNum = 1000;
-                    item.__vue__.commentDisable = false;
-                });
-                $(".wonder-list").parent().parent()[0].__vue__.isShowAllList = true;
+                    document.querySelectorAll(".wonder-item").forEach((item) => {
+                        if (!item.__vue__) return;
+                        item.__vue__.maxOneLineFontNum = 1000;
+                        item.__vue__.commentDisable = false;
+                    });
+                    let list = document.querySelector(".wonder-list");
+                    let listHost = list && list.parentElement && list.parentElement.parentElement;
+                    if (listHost && listHost.__vue__) {
+                        listHost.__vue__.isShowAllList = true;
+                    }
 
-                nodes = querySelectorIncludesText("span.text-content", "APP内查看完整回复");
-                nodes.forEach((item) => {
-                    item.remove();
-                });
+                    querySelectorIncludesText("span.text-content", "APP内查看完整回复").forEach((item) => {
+                        item.remove();
+                    });
+                } catch (err) {}
             },
             start: () => {
                 var post = {};
@@ -856,6 +864,22 @@
                     enumerable: true,
                     configurable: false,
                 });
+
+                if (location.hostname !== "m.nowcoder.com") return;
+                var appJump = ".more-btn-mask, .show-more-btn, .feed-top-app, .feed-app-bottom-go, .go-app-show-all, .download-btn, .ncmain-app-btn, .comment-content-box, .comment-head-container, .more-comments, .feed-cmt-tab-bar, .feed-salary-card-box";
+                var blockAppJump = function (e) {
+                    var t = e.target;
+                    if (!t || !t.closest || !t.closest(appJump)) return;
+                    var link = t.closest("a[href]");
+                    var href = link && (link.getAttribute("href") || "");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (link && href && !/^javascript:/i.test(href)) {
+                        location.href = link.href;
+                    }
+                };
+                document.addEventListener("click", blockAppJump, true);
+                document.addEventListener("touchend", blockAppJump, true);
             },
         },
         {
